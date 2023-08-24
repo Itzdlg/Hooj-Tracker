@@ -10,6 +10,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.DatabaseConfig
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import sh.dominick.hoojtracker.data.AccountsTable
 import java.lang.reflect.Type
 
 var prettyGson = GsonBuilder()
@@ -33,7 +34,9 @@ fun main() {
     })
 
     transaction {
-        SchemaUtils.createMissingTablesAndColumns()
+        SchemaUtils.createMissingTablesAndColumns(
+            AccountsTable
+        )
     }
 
     val app = Javalin.create { config ->

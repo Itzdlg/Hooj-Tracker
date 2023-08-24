@@ -15,4 +15,10 @@ object Env {
 
     val ARGON2_MEMORY_ALLOCATION = dotenv["ARGON2_MEMORY_ALLOCATION"]?.toIntOrNull() ?: 65535
     val ARGON2_PARALLELISM = dotenv["ARGON2_PARALLELISM"]?.toIntOrNull() ?: 1
+
+    val PASSWORD_SALT_CHARSET = dotenv["PASSWORD_SALT_CHARSET"]
+        ?: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+
+    val PASSWORD_HASH_ITERATIONS = dotenv["PASSWORD_HASH_ITERATIONS"]?.toIntOrNull()
+        ?: 6 /* For Argon2 this is enough */
 }

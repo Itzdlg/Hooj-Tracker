@@ -11,11 +11,13 @@ import java.time.Instant
 import java.util.*
 
 object AccountsTable : UUIDTable("accounts") {
+    const val SALT_LENGTH = 32
+
     val email = varchar("email", 320).nullable()
     val name = varchar("name", 48)
 
-    val password = varchar("password", 64)
-    val salt = varchar("password_salt", 64)
+    val password = text("password", eagerLoading = true)
+    val salt = varchar("password_salt", SALT_LENGTH)
 
     val createdAt = long("created_at")
     val updatedAt = long("updated_at")

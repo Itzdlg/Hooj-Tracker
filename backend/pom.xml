@@ -192,6 +192,14 @@
             <artifactId>routing-coroutines</artifactId>
             <version>5.5.0-RC.3</version>
         </dependency>
+
+        <!-- Argon2 Hashing Implementation -->
+        <!--  - Account Passwords -->
+        <dependency>
+            <groupId>de.mkammerer</groupId>
+            <artifactId>argon2-jvm</artifactId>
+            <version>2.7</version>
+        </dependency>
     </dependencies>
 
 </project>

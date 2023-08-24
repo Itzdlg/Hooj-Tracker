@@ -16,8 +16,8 @@ object AccountsTable : UUIDTable("accounts") {
     val email = varchar("email", 320).nullable()
     val name = varchar("name", 48)
 
-    val password = text("password", eagerLoading = true)
-    val salt = varchar("password_salt", SALT_LENGTH)
+    val password = text("password", eagerLoading = true).nullable()
+    val salt = varchar("password_salt", SALT_LENGTH).nullable()
 
     val createdAt = long("created_at")
     val updatedAt = long("updated_at")
@@ -36,6 +36,9 @@ class Account(id: EntityID<UUID>) : UUIDEntity(id) {
     var updatedAt by AccountsTable.updatedAt.transformInstant()
 
     fun isPassword(password: String): Boolean {
+        if (this.password == null || this.salt == null)
+            return false
+
         val salted = password + this.salt
         val hashed = argon2(salted, Env.PASSWORD_HASH_ITERATIONS)
 
@@ -47,11 +50,14 @@ class Account(id: EntityID<UUID>) : UUIDEntity(id) {
     }
 
     fun dto() = AccountDTO(
-        id.value,
-        email,
-        name,
-        createdAt.toEpochMilli(),
-        updatedAt.toEpochMilli()
+        id = id.value,
+        email = email,
+        name = name,
+        createdAt = createdAt.toEpochMilli(),
+        updatedAt = updatedAt.toEpochMilli(),
+        loginMethods = AccountLoginMethodsDTO(
+            password = password != null && salt != null
+        )
     )
 }
 
@@ -60,5 +66,10 @@ open class AccountDTO(
     val email: String?,
     val name: String,
     val createdAt: Long,
-    val updatedAt: Long
+    val updatedAt: Long,
+    val loginMethods: AccountLoginMethodsDTO
+)
+
+open class AccountLoginMethodsDTO(
+    val password: Boolean
 )

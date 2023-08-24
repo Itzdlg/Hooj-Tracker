@@ -3,7 +3,40 @@
   <component name="JetClientState">
     <option name="folders">
       <list>
-
+        <folderState>
+          <option name="id" value="a76ba770-0b22-4051-8b35-b0b6cc7a3cea" />
+          <option name="name" value="Accounts" />
+          <option name="requests">
+            <list>
+              <requestState>
+                <option name="body">
+                  <bodyState>
+                    <option name="raw" value="{&#10;  &quot;email&quot;: &quot;a.smith@yahoo.com&quot;,&#10;  &quot;name&quot;: &quot;Alex Smith&quot;,&#10;  &quot;password&quot;: &quot;1234567!&quot;&#10;}" />
+                    <option name="type" value="JSON" />
+                  </bodyState>
+                </option>
+                <option name="headers">
+                  <list>
+                    <headerState>
+                      <option name="key" value="Content-Type" />
+                      <option name="value" value="application/json" />
+                    </headerState>
+                  </list>
+                </option>
+                <option name="id" value="7ad49ac0-a244-428c-aca6-973fdf4a1efd" />
+                <option name="method" value="POST" />
+                <option name="name" value="Create Normal Account" />
+                <option name="url" value="http://localhost:8080/accounts/signup" />
+              </requestState>
+            </list>
+          </option>
+          <option name="sortWeight" value="1000000" />
+          <option name="syncProperties">
+            <synchronizationPropertiesState>
+              <option name="folderPath" value="F:\Programming\Full Stack\Hooj Tracker\.jetclient" />
+            </synchronizationPropertiesState>
+          </option>
+        </folderState>
       </list>
     </option>
     <option name="id" value="208b5b76-72d3-4011-9911-8c65edc5480b" />

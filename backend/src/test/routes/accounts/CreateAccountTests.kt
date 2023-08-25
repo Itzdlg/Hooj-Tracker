@@ -27,12 +27,6 @@ class CreateAccountTests {
             )
         }
 
-        @AfterClass
-        @JvmStatic
-        fun tearDown() {
-            TransactionManager.defaultDatabase?.let { TransactionManager.closeAndUnregister(it) }
-        }
-
         private var index: Int = 0
 
         private fun newName(): String

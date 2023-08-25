@@ -1,9 +1,11 @@
 package sh.dominick.hoojtracker.data.accounts
 
+import io.javalin.validation.JavalinValidation
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.sql.transactions.transaction
 import sh.dominick.hoojtracker.util.transformInstant
 import java.time.Instant
 import java.util.*
@@ -17,7 +19,17 @@ object AccountsTable : UUIDTable("accounts") {
 }
 
 class Account(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object : UUIDEntityClass<Account>(AccountsTable)
+    companion object : UUIDEntityClass<Account>(AccountsTable) {
+        init {
+            JavalinValidation.register(Account::class.java) {
+                val uuid = UUID.fromString(it)
+
+                return@register transaction {
+                    Account.findById(uuid)
+                }
+            }
+        }
+    }
 
     var email by AccountsTable.email
     var name by AccountsTable.name

@@ -1,8 +1,6 @@
 ﻿package sh.dominick.hoojtracker.routes
 
-import io.javalin.community.routing.annotations.Body
-import io.javalin.community.routing.annotations.Endpoints
-import io.javalin.community.routing.annotations.Post
+import io.javalin.community.routing.annotations.*
 import io.javalin.http.ConflictResponse
 import io.javalin.http.Context
 import org.jetbrains.exposed.sql.lowerCase

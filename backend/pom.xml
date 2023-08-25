@@ -33,6 +33,9 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>1.7.20</version>
+                <configuration>
+                    <javaParameters>true</javaParameters>
+                </configuration>
                 <executions>
                     <execution>
                         <id>compile</id>
@@ -64,6 +67,9 @@
                 <configuration>
                     <source>8</source>
                     <target>8</target>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>

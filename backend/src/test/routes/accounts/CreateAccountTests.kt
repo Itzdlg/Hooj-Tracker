@@ -6,9 +6,7 @@ import io.mockk.MockKAssertScope
 import io.mockk.mockk
 import io.mockk.verify
 import junit.framework.TestCase.assertTrue
-import mock.SQLiteMemoryDatabase
-import org.jetbrains.exposed.sql.transactions.TransactionManager
-import org.junit.AfterClass
+import mock.TestingDatabase
 import org.junit.BeforeClass
 import org.junit.Test
 import sh.dominick.hoojtracker.data.accounts.AccountCredentialsTable
@@ -23,7 +21,7 @@ class CreateAccountTests {
         @BeforeClass
         @JvmStatic
         fun setup() {
-            SQLiteMemoryDatabase.connect(
+            TestingDatabase.connect(
                 AccountsTable,
                 AccountCredentialsTable
             )
@@ -105,7 +103,6 @@ class CreateAccountTests {
 
         verify { ctx.json(withArg {
             val dto = assertAndReadAccount(it)
-
             assertTrue(dto.loginMethods.password)
         }) }
     }

@@ -1,26 +1,27 @@
 package mock
 
 import com.zaxxer.hikari.HikariDataSource
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.DatabaseConfig
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
-object SQLiteMemoryDatabase {
-    fun connect(vararg tables: Table) {
+object TestingDatabase {
+    init {
         val dataSource = HikariDataSource().apply {
             maximumPoolSize = 1
-            jdbcUrl = "jdbc:sqlite::memory:"
+            jdbcUrl = "jdbc:h2:mem:test"
             username = "root"
             password = ""
             isAutoCommit = true
         }
 
-        val database = Database.connect(dataSource, databaseConfig = DatabaseConfig {
+        Database.connect(dataSource, databaseConfig = DatabaseConfig {
             keepLoadedReferencesOutOfTransaction = true
         })
 
+        transaction {  }
+    }
+
+    fun connect(vararg tables: Table) {
         transaction {
             SchemaUtils.createMissingTablesAndColumns(
                 *tables

@@ -4,7 +4,7 @@ import io.javalin.http.Context
 import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertTrue
-import mock.SQLiteMemoryDatabase
+import mock.TestingDatabase
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
@@ -41,7 +41,7 @@ class URLQuerySieveTests {
         @BeforeClass
         @JvmStatic
         fun setup() {
-            SQLiteMemoryDatabase.connect(TestTable)
+            TestingDatabase.connect(TestTable)
         }
 
         private fun assertQueryEquals(a: Op<Boolean>, b: Op<Boolean>) {

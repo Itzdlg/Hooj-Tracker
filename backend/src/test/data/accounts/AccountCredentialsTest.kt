@@ -2,7 +2,7 @@ package data.accounts
 
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
-import mock.SQLiteMemoryDatabase
+import mock.TestingDatabase
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.BeforeClass
 import org.junit.Test
@@ -14,7 +14,7 @@ class AccountCredentialsTest {
         @BeforeClass
         @JvmStatic
         fun setup() {
-            SQLiteMemoryDatabase.connect(
+            TestingDatabase.connect(
                 AccountsTable,
                 AccountCredentialsTable
             )

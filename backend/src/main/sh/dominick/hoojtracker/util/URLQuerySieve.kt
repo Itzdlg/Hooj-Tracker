@@ -17,7 +17,12 @@ class Filter(val query: Op<Boolean>, val limit: Int, val offset: Long = 0) {
     )
 
     enum class Method {
-        LIKE, EQ, LT, GT
+        LIKE, EQ, LT, GT,
+    }
+
+    enum class Match(val joinQuery: (Op<Boolean>, Op<Boolean>) -> (Op<Boolean>)) {
+        ALL({ a, b -> a and b }),
+        ANY({ a, b -> a or b })
     }
 
     companion object {
@@ -26,28 +31,42 @@ class Filter(val query: Op<Boolean>, val limit: Int, val offset: Long = 0) {
             filters: Set<Parameter<*>>,
             maxLimit: Int,
             defaultLimit: Int = maxLimit): Filter {
-            var query: Op<Boolean> = Op.TRUE
-
             val limit = (ctx.queryParam("limit")?.toIntOrNull() ?: defaultLimit).coerceAtMost(maxLimit)
             val offset = ctx.queryParam("offset")?.toLongOrNull() ?: 0
 
-            val joinQuery: (Op<Boolean>, Op<Boolean>) -> (Op<Boolean>) = when (ctx.queryParam("match")?.lowercase()) {
+            val matchType = when(ctx.queryParam("match")?.lowercase()) {
+                "all" -> Match.ALL
+                "any" -> Match.ANY
+                else -> Match.ALL
+            }
+
+/*            val joinQuery: (Op<Boolean>, Op<Boolean>) -> (Op<Boolean>) = when (ctx.queryParam("match")?.lowercase()) {
                 "all" -> { a, b -> a and b }
                 "any" -> { a, b -> a or b }
 
                 else -> { a, b -> a and b }
-            }
+            }*/
+
+            var query: Op<Boolean>
+                = if (matchType == Match.ANY) Op.FALSE else Op.TRUE
 
             for (filter in filters) {
                 val parameter = ctx.queryParam("f:${filter.name}") ?: continue
 
-                var method = Method.LIKE
+                if (parameter.isBlank())
+                    continue
+
+                var method = when (filter.columnClass) {
+                    String::class.java -> Method.LIKE
+                    else -> Method.EQ
+                }
+
                 var value = parameter
 
                 for (possible in Method.values()) {
                     if (parameter.startsWith(possible.name + ":", ignoreCase = true)) {
                         method = possible
-                        value = parameter.substringAfter(possible.name + ":")
+                        value = parameter.substring((possible.name + ":").length)
                     }
                 }
 
@@ -73,7 +92,7 @@ class Filter(val query: Op<Boolean>, val limit: Int, val offset: Long = 0) {
                     }
                 }
 
-                query = joinQuery(query, addon)
+                query = matchType.joinQuery(query, addon)
             }
 
             return Filter(query, limit, offset)

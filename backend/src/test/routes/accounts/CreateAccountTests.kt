@@ -11,8 +11,8 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.junit.Test
-import sh.dominick.hoojtracker.data.AccountDTO
-import sh.dominick.hoojtracker.data.AccountsTable
+import sh.dominick.hoojtracker.data.accounts.AccountDTO
+import sh.dominick.hoojtracker.data.accounts.AccountsTable
 import sh.dominick.hoojtracker.routes.AccountsController
 
 class CreateAccountTests {

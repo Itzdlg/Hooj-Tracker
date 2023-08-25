@@ -7,10 +7,9 @@ import io.javalin.http.ConflictResponse
 import io.javalin.http.Context
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.transactions.transaction
-import sh.dominick.hoojtracker.Env
-import sh.dominick.hoojtracker.data.Account
-import sh.dominick.hoojtracker.data.AccountsTable
-import sh.dominick.hoojtracker.util.argon2
+import sh.dominick.hoojtracker.data.accounts.Account
+import sh.dominick.hoojtracker.data.accounts.AccountCredentials
+import sh.dominick.hoojtracker.data.accounts.AccountsTable
 import java.time.Instant
 import java.util.concurrent.ThreadLocalRandom
 

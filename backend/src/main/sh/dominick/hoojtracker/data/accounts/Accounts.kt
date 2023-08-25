@@ -1,4 +1,4 @@
-package sh.dominick.hoojtracker.data
+package sh.dominick.hoojtracker.data.accounts
 
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass

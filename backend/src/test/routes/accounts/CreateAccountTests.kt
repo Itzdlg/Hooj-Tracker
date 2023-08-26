@@ -12,6 +12,7 @@ import org.junit.Test
 import sh.dominick.hoojtracker.data.accounts.AccountCredentialsTable
 import sh.dominick.hoojtracker.data.accounts.AccountDTO
 import sh.dominick.hoojtracker.data.accounts.AccountsTable
+import sh.dominick.hoojtracker.data.oauth2.OAuth2ConnectionsTable
 import sh.dominick.hoojtracker.routes.AccountsController
 
 class CreateAccountTests {
@@ -23,7 +24,8 @@ class CreateAccountTests {
         fun setup() {
             TestingDatabase.connect(
                 AccountsTable,
-                AccountCredentialsTable
+                AccountCredentialsTable,
+                OAuth2ConnectionsTable
             )
         }
 

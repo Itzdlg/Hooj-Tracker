@@ -12,6 +12,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import sh.dominick.hoojtracker.data.accounts.AccountCredentialsTable
 import sh.dominick.hoojtracker.data.accounts.AccountsTable
+import sh.dominick.hoojtracker.data.oauth2.OAuth2ConnectionsTable
 import sh.dominick.hoojtracker.routes.AccountsController
 import java.lang.reflect.Type
 import java.util.*
@@ -39,7 +40,8 @@ fun main() {
     transaction {
         SchemaUtils.createMissingTablesAndColumns(
             AccountsTable,
-            AccountCredentialsTable
+            AccountCredentialsTable,
+            OAuth2ConnectionsTable
         )
     }
 

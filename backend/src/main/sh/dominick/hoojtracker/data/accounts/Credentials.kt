@@ -7,14 +7,12 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.insert
-import sh.dominick.hoojtracker.Env
 import sh.dominick.hoojtracker.data.accounts.Account.Companion.referrersOn
+import sh.dominick.hoojtracker.data.config.Configuration
 import sh.dominick.hoojtracker.util.transformInstant
 import java.time.Instant
 
 object AccountCredentialsTable : IntIdTable("account_credentials") {
-    const val SALT_LENGTH = 16
-
     val account = reference("account", AccountsTable)
 
     val createdAt = long("created_at")
@@ -26,16 +24,16 @@ class AccountCredentials(id: EntityID<Int>) : IntEntity(id) {
     companion object : EntityClass<Int, AccountCredentials>(AccountCredentialsTable) {
         fun new(account: Account, password: String) {
             val argon2 = Argon2Factory.create(
-                AccountCredentialsTable.SALT_LENGTH,
+                Configuration.PASSWORD_SALT_LENGTH,
                 1024
             )
 
             val passwordArray = password.toCharArray()
             val hashedPassword = try {
                 argon2.hash(
-                    Env.PASSWORD_HASH_ITERATIONS,
-                    Env.ARGON2_MEMORY_ALLOCATION,
-                    Env.ARGON2_PARALLELISM,
+                    Configuration.PASSWORD_HASH_ITERATIONS,
+                    Configuration.ARGON2_MEMORY,
+                    Configuration.ARGON2_PARALLELISM,
                     passwordArray
                 )
             } finally {

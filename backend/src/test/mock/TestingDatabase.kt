@@ -3,6 +3,7 @@ package mock
 import com.zaxxer.hikari.HikariDataSource
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import sh.dominick.hoojtracker.data.config.ConfigurationTable
 
 object TestingDatabase {
     init {
@@ -24,6 +25,7 @@ object TestingDatabase {
     fun connect(vararg tables: Table) {
         transaction {
             SchemaUtils.createMissingTablesAndColumns(
+                ConfigurationTable,
                 *tables
             )
         }

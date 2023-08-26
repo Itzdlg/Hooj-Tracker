@@ -3,6 +3,7 @@ package sh.dominick.hoojtracker.data.oauth2.providers
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow
 import com.google.api.client.auth.oauth2.StoredCredential
 import com.google.api.client.util.store.DataStore
+import sh.dominick.hoojtracker.Env
 import sh.dominick.hoojtracker.data.accounts.Account
 import sh.dominick.hoojtracker.data.oauth2.OAuth2Connection
 import java.lang.RuntimeException
@@ -33,6 +34,15 @@ abstract class OAuth2Provider(val id: Int, val apiId: String) {
 
     abstract val flow: AuthorizationCodeFlow
     abstract val dataStore: DataStore<StoredCredential>
+
+    abstract val clientId: String
+    abstract val clientSecret: String
+
+    abstract val acceptingRegistrations: Boolean
+    abstract val acceptingLogins: Boolean
+
+    open val redirectUri: String
+        = Env.OAUTH2_REDIRECT_URI.replace("{provider}", apiId)
 
     abstract fun connect(code: String, applyName: Account.(String) -> (Unit)): Pair<Account, OAuth2Connection>
 }

@@ -12,8 +12,8 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import sh.dominick.hoojtracker.Env
 import sh.dominick.hoojtracker.data.accounts.Account
+import sh.dominick.hoojtracker.data.config.Configuration
 import sh.dominick.hoojtracker.data.oauth2.ExposedCredentialDataStore
 import sh.dominick.hoojtracker.data.oauth2.OAuth2Connection
 import sh.dominick.hoojtracker.data.oauth2.OAuth2ConnectionsTable
@@ -25,14 +25,26 @@ import java.net.http.HttpResponse
 import java.time.Instant
 
 object DiscordOAuth2Provider : OAuth2Provider(0, "discord") {
+    override val clientId
+        get() = Configuration.OAUTH2_DISCORD_CLIENT_ID
+
+    override val clientSecret
+        get() = Configuration.OAUTH2_DISCORD_CLIENT_SECRET
+
+    override val acceptingRegistrations
+        get() = Configuration.OAUTH2_DISCORD_REGISTRATIONS && clientSecret.isNotBlank()
+
+    override val acceptingLogins: Boolean
+        get() = Configuration.OAUTH2_DISCORD_LOGIN
+
     override val flow: AuthorizationCodeFlow by lazy {
         AuthorizationCodeFlow.Builder(
             BearerToken.authorizationHeaderAccessMethod(),
             NetHttpTransport(),
             GsonFactory(),
             GenericUrl("https://discord.com/api/oauth2/token"),
-            BasicAuthentication(Env.OAUTH2_DISCORD_CLIENT_ID, Env.OAUTH2_DISCORD_CLIENT_SECRET),
-            Env.OAUTH2_DISCORD_CLIENT_ID,
+            BasicAuthentication(clientId, clientSecret),
+            clientId,
             "https://discord.com/api/oauth2/authorize"
         ).setCredentialDataStore(
             dataStore
@@ -47,7 +59,7 @@ object DiscordOAuth2Provider : OAuth2Provider(0, "discord") {
     override fun connect(code: String, applyName: Account.(String) -> (Unit)): Pair<Account, OAuth2Connection> {
         val response = flow
             .newTokenRequest(code)
-            .setRedirectUri("http://localhost:5173/signup/discord")
+            .setRedirectUri(redirectUri)
             .execute()
 
         val account = transaction {

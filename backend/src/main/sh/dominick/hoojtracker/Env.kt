@@ -13,15 +13,5 @@ object Env {
     val DATABASE_PASSWORD = dotenv["DATABASE_PASSWORD"] ?: "passwd"
     val DATABASE_POOL_SIZE = dotenv["DATABASE_POOL_SIZE"]?.toIntOrNull() ?: 10
 
-    val ARGON2_MEMORY_ALLOCATION = dotenv["ARGON2_MEMORY_ALLOCATION"]?.toIntOrNull() ?: 65535
-    val ARGON2_PARALLELISM = dotenv["ARGON2_PARALLELISM"]?.toIntOrNull() ?: 1
-
-    val PASSWORD_SALT_CHARSET = dotenv["PASSWORD_SALT_CHARSET"]
-        ?: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
-
-    val PASSWORD_HASH_ITERATIONS = dotenv["PASSWORD_HASH_ITERATIONS"]?.toIntOrNull()
-        ?: 6 /* For Argon2 this is enough */
-
-    val OAUTH2_DISCORD_CLIENT_ID = dotenv["OAUTH2_DISCORD_CLIENT_ID"]
-    val OAUTH2_DISCORD_CLIENT_SECRET = dotenv["OAUTH2_DISCORD_CLIENT_SECRET"]
+    val OAUTH2_REDIRECT_URI = dotenv["OAUTH2_REDIRECT_URI"] ?: "http://localhost:5173/signup/{provider}"
 }

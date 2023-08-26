@@ -5,7 +5,7 @@ import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.insert
 import sh.dominick.hoojtracker.Env
 import sh.dominick.hoojtracker.data.accounts.Account.Companion.referrersOn
@@ -69,9 +69,9 @@ class AccountCredentials(id: EntityID<Int>) : IntEntity(id) {
     }
 }
 
-val Account.credentials by AccountCredentials referrersOn AccountCredentialsTable.account
-val Account.activeCredentials
-    get() = credentials.maxByOrNull { it.createdAt }
+val Account.credentials: SizedIterable<AccountCredentials>? by AccountCredentials referrersOn AccountCredentialsTable.account
+val Account.activeCredentials: AccountCredentials?
+    get() = credentials?.maxByOrNull { it.createdAt }
 
 fun Account.isPassword(password: String): Boolean
     = this.activeCredentials?.isPassword(password) ?: false

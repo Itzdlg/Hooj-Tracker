@@ -86,7 +86,7 @@ class AccountCredentialsTest {
 
             assertTrue(
                 "An incorrect number of credentials were saved",
-                account.credentials.count() == 3L
+                account.credentials?.count() == 3L
             )
 
             val credentials = account.activeCredentials

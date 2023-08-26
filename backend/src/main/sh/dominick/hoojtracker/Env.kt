@@ -21,4 +21,7 @@ object Env {
 
     val PASSWORD_HASH_ITERATIONS = dotenv["PASSWORD_HASH_ITERATIONS"]?.toIntOrNull()
         ?: 6 /* For Argon2 this is enough */
+
+    val OAUTH2_DISCORD_CLIENT_ID = dotenv["OAUTH2_DISCORD_CLIENT_ID"]
+    val OAUTH2_DISCORD_CLIENT_SECRET = dotenv["OAUTH2_DISCORD_CLIENT_SECRET"]
 }

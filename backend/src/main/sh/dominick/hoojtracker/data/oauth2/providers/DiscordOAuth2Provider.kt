@@ -57,80 +57,55 @@ object DiscordOAuth2Provider : OAuth2Provider(0, "discord") {
     }
 
     override fun connect(code: String, applyName: Account.(String) -> (Unit)): Pair<Account, OAuth2Connection> {
-        val response = flow
-            .newTokenRequest(code)
-            .setRedirectUri(redirectUri)
-            .execute()
+        return transaction {
+            val response = flow
+                .newTokenRequest(code)
+                .setRedirectUri(redirectUri)
+                .execute()
 
-        val account = transaction {
-            Account.new {
+            val account = Account.new {
                 this.name = "OAuth2 Flow $code"
 
                 this.createdAt = Instant.now()
                 this.updated()
             }
-        }
 
-        val accountId = account.id.value
+            val accountId = account.id.value
+            val credential = flow.createAndStoreCredential(response, accountId.toString())
 
-        val credential = flow.createAndStoreCredential(response, accountId.toString())
+            val connection = account.connections[this@DiscordOAuth2Provider]
+                ?: throw IllegalStateException()
 
-        val connection = transaction {
-            val it = account.connections[this@DiscordOAuth2Provider]
-            if (it == null) {
-                account.delete()
-                throw IllegalStateException()
-            }
+            val client = HttpClient.newHttpClient()
 
-            return@transaction it
-        }
+            val meRequest = HttpRequest.newBuilder(URI.create("https://discord.com/api/oauth2/@me"))
+                .header("Authorization", "Bearer " + credential.accessToken)
+                .GET()
+                .build()
 
-        val client = HttpClient.newHttpClient()
+            val meResponse = client.send(meRequest, HttpResponse.BodyHandlers.ofString())
 
-        val meRequest = HttpRequest.newBuilder(URI.create("https://discord.com/api/oauth2/@me"))
-            .header("Authorization", "Bearer " + credential.accessToken)
-            .GET()
-            .build()
+            val json = JsonParser.parseString(meResponse.body()).asJsonObject
+            val userObj = json["user"]?.asJsonObject
+                ?: throw IllegalStateException()
 
-        val meResponse = client.send(meRequest, HttpResponse.BodyHandlers.ofString())
+            val name = userObj.get("global_name")?.asString
+                ?: throw IllegalStateException()
 
-        val json = JsonParser.parseString(meResponse.body()).asJsonObject
+            val id = userObj.get("id")?.asString
+                ?: throw IllegalStateException()
 
-        if (!json.has("user")) transaction {
-            account.delete()
-            throw InvalidProviderResponseException()
-        }
-
-        val userObj: JsonObject? = json["user"]?.asJsonObject
-
-        val name = userObj?.get("global_name")?.asString
-        val id = userObj?.get("id")?.asString
-
-        if (name == null || id == null) transaction {
-            connection.delete()
-            account.delete()
-
-            throw InvalidProviderResponseException()
-        }
-
-        val idExists = transaction {
-            OAuth2ConnectionsTable.select {
+            val exists = OAuth2ConnectionsTable.select {
                 OAuth2ConnectionsTable.providerAccountId eq id
             }.count() > 0
-        }
 
-        if (idExists) transaction {
-            connection.delete()
-            account.delete()
+            if (exists)
+                throw ExistingConnectionException()
 
-            throw ExistingConnectionException()
-        }
-
-        return transaction {
             applyName(account, name)
-
             connection.providerAccountId = id
-            account to connection
+
+            return@transaction account to connection
         }
     }
 }

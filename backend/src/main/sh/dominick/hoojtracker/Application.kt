@@ -33,7 +33,7 @@ fun main() {
         jdbcUrl = Env.DATABASE_URL
         username = Env.DATABASE_USERNAME
         password = Env.DATABASE_PASSWORD
-        isAutoCommit = true
+        isAutoCommit = false
     }
 
     val database = Database.connect(dataSource, databaseConfig = DatabaseConfig {

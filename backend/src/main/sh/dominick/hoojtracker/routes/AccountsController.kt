@@ -53,16 +53,16 @@ object AccountsController {
 
     @Post("/signup/oauth2")
     fun createOAuth2(ctx: Context, @Body request: CreateOAuth2Request) {
-        val provider = OAuth2Provider.fromApiId(request.provider) ?:
-            throw BadRequestResponse("OAuth2 provider '${request.provider}' was not found.")
-
-        val result = provider.connect(request.code) {
-            if (request.name == null)
-                this.name = it
-            else this.name = request.name
-        }
-
         transaction {
+            val provider = OAuth2Provider.fromApiId(request.provider) ?:
+                throw BadRequestResponse("OAuth2 provider '${request.provider}' was not found.")
+
+            val result = provider.connect(request.code) {
+                if (request.name == null)
+                    this.name = it
+                else this.name = request.name
+            }
+
             result.first.email = request.email
 
             if (request.password != null)

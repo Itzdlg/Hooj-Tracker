@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.reflect.KProperty
 
 object ConfigurationTable : IntIdTable("configuration") {
-    val key = varchar("key", 64).uniqueIndex()
+    val key = text("key", eagerLoading = true)
     val value = text("value", eagerLoading = true)
 
     fun query(key: String)
@@ -22,12 +22,6 @@ object Configuration {
 
     val PASSWORD_SALT_LENGTH by IntEntry("passwords.salt_length", 32)
     val PASSWORD_HASH_ITERATIONS by IntEntry("passwords.hash_iterations", 6)
-
-    val OAUTH2_DISCORD_CLIENT_ID by StringEntry("oauth2.discord.client_id", "")
-    val OAUTH2_DISCORD_CLIENT_SECRET by StringEntry("oauth2.discord.client_secret", "")
-
-    val OAUTH2_DISCORD_LOGIN by BooleanEntry("oauth2.discord.login", false)
-    val OAUTH2_DISCORD_REGISTRATIONS by BooleanEntry("oauth2.discord.registrations", false)
 
     operator fun get(key: String): String? {
         return transaction {

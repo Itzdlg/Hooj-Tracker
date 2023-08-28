@@ -1,4 +1,4 @@
-package sh.dominick.hoojtracker.data.oauth2
+package sh.dominick.hoojtracker.modules.oauth2.data
 
 import com.google.api.client.auth.oauth2.StoredCredential
 import org.jetbrains.exposed.dao.EntityClass
@@ -6,10 +6,11 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.SizedIterable
-import sh.dominick.hoojtracker.data.accounts.Account
-import sh.dominick.hoojtracker.data.accounts.Account.Companion.referrersOn
-import sh.dominick.hoojtracker.data.accounts.AccountsTable
-import sh.dominick.hoojtracker.data.oauth2.providers.OAuth2Provider
+import sh.dominick.hoojtracker.modules.accounts.data.Account
+import sh.dominick.hoojtracker.modules.accounts.data.Account.Companion.referrersOn
+import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
+import sh.dominick.hoojtracker.modules.oauth2.OAuth2ConnectionsModule
+import sh.dominick.hoojtracker.modules.oauth2.providers.OAuth2Provider
 import sh.dominick.hoojtracker.util.transformInstant
 import java.time.Instant
 
@@ -31,7 +32,7 @@ class OAuth2Connection(id : EntityID<Int>) : IntEntity(id) {
 
     var provider by OAuth2ConnectionsTable.provider.transform(
         toColumn = { it.id },
-        toReal = { OAuth2Provider.fromId(it)!! }
+        toReal = { id -> OAuth2ConnectionsModule.providers.first { it.id == id } }
     )
 
     var providerAccountId by OAuth2ConnectionsTable.providerAccountId

@@ -9,11 +9,11 @@ import junit.framework.TestCase.assertTrue
 import mock.TestingDatabase
 import org.junit.BeforeClass
 import org.junit.Test
-import sh.dominick.hoojtracker.data.accounts.AccountCredentialsTable
-import sh.dominick.hoojtracker.data.accounts.AccountDTO
-import sh.dominick.hoojtracker.data.accounts.AccountsTable
-import sh.dominick.hoojtracker.data.oauth2.OAuth2ConnectionsTable
-import sh.dominick.hoojtracker.routes.AccountsController
+import sh.dominick.hoojtracker.modules.accounts.data.AccountCredentialsTable
+import sh.dominick.hoojtracker.modules.accounts.data.AccountDTO
+import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
+import sh.dominick.hoojtracker.modules.oauth2.data.OAuth2ConnectionsTable
+import sh.dominick.hoojtracker.modules.accounts.routes.AccountsController
 
 class CreateAccountTests {
     companion object {

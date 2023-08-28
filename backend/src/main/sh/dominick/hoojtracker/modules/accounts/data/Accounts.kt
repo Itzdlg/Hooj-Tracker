@@ -1,4 +1,4 @@
-package sh.dominick.hoojtracker.data.accounts
+package sh.dominick.hoojtracker.modules.accounts.data
 
 import io.javalin.validation.JavalinValidation
 import org.jetbrains.exposed.dao.UUIDEntity

@@ -6,7 +6,7 @@ import mock.TestingDatabase
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.BeforeClass
 import org.junit.Test
-import sh.dominick.hoojtracker.data.accounts.*
+import sh.dominick.hoojtracker.modules.accounts.data.*
 import java.time.Instant
 
 class AccountCredentialsTest {

@@ -1,4 +1,4 @@
-package sh.dominick.hoojtracker.data.oauth2.providers
+package sh.dominick.hoojtracker.modules.oauth2.providers
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow
 import com.google.api.client.auth.oauth2.BearerToken
@@ -8,35 +8,21 @@ import com.google.api.client.http.GenericUrl
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.store.DataStore
-import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import sh.dominick.hoojtracker.data.accounts.Account
-import sh.dominick.hoojtracker.data.config.Configuration
-import sh.dominick.hoojtracker.data.oauth2.ExposedCredentialDataStore
-import sh.dominick.hoojtracker.data.oauth2.OAuth2Connection
-import sh.dominick.hoojtracker.data.oauth2.OAuth2ConnectionsTable
-import sh.dominick.hoojtracker.data.oauth2.connections
+import sh.dominick.hoojtracker.modules.accounts.data.Account
+import sh.dominick.hoojtracker.modules.oauth2.data.ExposedCredentialDataStore
+import sh.dominick.hoojtracker.modules.oauth2.data.OAuth2Connection
+import sh.dominick.hoojtracker.modules.oauth2.data.OAuth2ConnectionsTable
+import sh.dominick.hoojtracker.modules.oauth2.data.connections
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.time.Instant
 
-object DiscordOAuth2Provider : OAuth2Provider(0, "discord") {
-    override val clientId
-        get() = Configuration.OAUTH2_DISCORD_CLIENT_ID
-
-    override val clientSecret
-        get() = Configuration.OAUTH2_DISCORD_CLIENT_SECRET
-
-    override val acceptingRegistrations
-        get() = Configuration.OAUTH2_DISCORD_REGISTRATIONS && clientSecret.isNotBlank()
-
-    override val acceptingLogins: Boolean
-        get() = Configuration.OAUTH2_DISCORD_LOGIN
-
+abstract class DiscordOAuth2Provider : OAuth2Provider(0, "discord") {
     override val flow: AuthorizationCodeFlow by lazy {
         AuthorizationCodeFlow.Builder(
             BearerToken.authorizationHeaderAccessMethod(),

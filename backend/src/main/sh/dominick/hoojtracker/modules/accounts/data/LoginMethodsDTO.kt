@@ -1,7 +1,7 @@
-package sh.dominick.hoojtracker.data.accounts
+package sh.dominick.hoojtracker.modules.accounts.data
 
-import sh.dominick.hoojtracker.data.oauth2.connections
-import sh.dominick.hoojtracker.data.oauth2.providers.OAuth2Provider
+import sh.dominick.hoojtracker.modules.oauth2.OAuth2ConnectionsModule
+import sh.dominick.hoojtracker.modules.oauth2.data.connections
 
 class LoginMethodsDTO(
     val password: Boolean,
@@ -9,7 +9,7 @@ class LoginMethodsDTO(
 ) {
     constructor(account: Account) : this(
         password = account.activeCredentials != null,
-        connections = OAuth2Provider.values()
+        connections = OAuth2ConnectionsModule.providers
             .associateBy { it.apiId }
             .mapValues { account.connections[it.value] != null }
     )

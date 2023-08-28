@@ -1,4 +1,4 @@
-package sh.dominick.hoojtracker.data.oauth2
+package sh.dominick.hoojtracker.modules.oauth2.data
 
 import com.google.api.client.auth.oauth2.StoredCredential
 import com.google.api.client.util.store.DataStore
@@ -7,8 +7,8 @@ import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import sh.dominick.hoojtracker.data.accounts.Account
-import sh.dominick.hoojtracker.data.oauth2.providers.OAuth2Provider
+import sh.dominick.hoojtracker.modules.accounts.data.Account
+import sh.dominick.hoojtracker.modules.oauth2.providers.OAuth2Provider
 import java.io.Serializable
 import java.util.*
 

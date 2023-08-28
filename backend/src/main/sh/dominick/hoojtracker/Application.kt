@@ -10,14 +10,10 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.DatabaseConfig
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
-import sh.dominick.hoojtracker.data.accounts.AccountCredentialsTable
-import sh.dominick.hoojtracker.data.accounts.AccountsTable
 import sh.dominick.hoojtracker.data.config.Configuration
 import sh.dominick.hoojtracker.data.config.ConfigurationTable
-import sh.dominick.hoojtracker.data.oauth2.OAuth2ConnectionsTable
-import sh.dominick.hoojtracker.data.oauth2.providers.DiscordOAuth2Provider
-import sh.dominick.hoojtracker.data.oauth2.providers.OAuth2Provider
-import sh.dominick.hoojtracker.routes.AccountsController
+import sh.dominick.hoojtracker.modules.accounts.AccountsModule
+import sh.dominick.hoojtracker.modules.oauth2.OAuth2ConnectionsModule
 import java.lang.reflect.Type
 
 var prettyGson = GsonBuilder()
@@ -40,16 +36,6 @@ fun main() {
         keepLoadedReferencesOutOfTransaction = true
     })
 
-    transaction {
-        SchemaUtils.createMissingTablesAndColumns(
-            ConfigurationTable,
-
-            AccountsTable,
-            AccountCredentialsTable,
-            OAuth2ConnectionsTable
-        )
-    }
-
     val app = Javalin.create { config ->
         config.jsonMapper(object : JsonMapper {
             override fun <T : Any> fromJsonString(json: String, targetType: Type): T =
@@ -66,17 +52,19 @@ fun main() {
         }
 
         val routingPlugin = AnnotatedRoutingPlugin()
-        routingPlugin.registerEndpoints(
-            AccountsController
-        )
+        val gsonBuilder = prettyGson.newBuilder()
+
+        transaction {
+            SchemaUtils.createMissingTablesAndColumns(ConfigurationTable)
+            Configuration
+        }
+
+        setOf(AccountsModule, OAuth2ConnectionsModule).forEach { module ->
+            module.load(routingPlugin, gsonBuilder, config)
+        }
+
+        prettyGson = gsonBuilder.create()
 
         config.plugins.register(routingPlugin)
     }.start(Env.PORT)
-
-    // Special Initializations
-    setOf(DiscordOAuth2Provider).forEach {
-        OAuth2Provider.register(it)
-    }
-
-    Configuration
 }

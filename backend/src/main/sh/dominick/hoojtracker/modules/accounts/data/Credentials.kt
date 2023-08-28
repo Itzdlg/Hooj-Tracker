@@ -1,4 +1,4 @@
-package sh.dominick.hoojtracker.data.accounts
+package sh.dominick.hoojtracker.modules.accounts.data
 
 import de.mkammerer.argon2.Argon2Factory
 import org.jetbrains.exposed.dao.EntityClass
@@ -7,7 +7,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.insert
-import sh.dominick.hoojtracker.data.accounts.Account.Companion.referrersOn
+import sh.dominick.hoojtracker.modules.accounts.data.Account.Companion.referrersOn
 import sh.dominick.hoojtracker.data.config.Configuration
 import sh.dominick.hoojtracker.util.transformInstant
 import java.time.Instant
@@ -42,9 +42,9 @@ class AccountCredentials(id: EntityID<Int>) : IntEntity(id) {
 
             AccountCredentialsTable.insert {
                 it[AccountCredentialsTable.account] = account.id
-                it[AccountCredentialsTable.createdAt] = Instant.now().toEpochMilli()
+                it[createdAt] = Instant.now().toEpochMilli()
 
-                it[AccountCredentialsTable.argon2Output] = hashedPassword
+                it[argon2Output] = hashedPassword
             }
         }
     }

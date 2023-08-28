@@ -5,6 +5,7 @@ import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.SizedIterable
 import sh.dominick.hoojtracker.modules.accounts.data.Account
 import sh.dominick.hoojtracker.modules.accounts.data.Account.Companion.referrersOn
@@ -15,7 +16,7 @@ import sh.dominick.hoojtracker.util.transformInstant
 import java.time.Instant
 
 object OAuth2ConnectionsTable : IntIdTable("oauth2_connections") {
-    val account = reference("account", AccountsTable).uniqueIndex()
+    val account = reference("account", AccountsTable, onDelete = ReferenceOption.CASCADE).uniqueIndex()
     val providerAccountId = text("provider_account_id", eagerLoading = true).nullable().default(null)
 
     val provider = integer("provider")

@@ -5,6 +5,7 @@ import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.insert
 import sh.dominick.hoojtracker.modules.accounts.data.Account.Companion.referrersOn
@@ -13,7 +14,7 @@ import sh.dominick.hoojtracker.util.transformInstant
 import java.time.Instant
 
 object AccountCredentialsTable : IntIdTable("account_credentials") {
-    val account = reference("account", AccountsTable)
+    val account = reference("account", AccountsTable, onDelete = ReferenceOption.CASCADE)
 
     val createdAt = long("created_at")
 

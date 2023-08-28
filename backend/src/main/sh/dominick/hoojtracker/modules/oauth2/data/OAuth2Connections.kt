@@ -24,6 +24,10 @@ object OAuth2ConnectionsTable : IntIdTable("oauth2_connections") {
     val accessToken = text("access_token", eagerLoading = true)
     val refreshToken = text("refresh_token", eagerLoading = true)
     val expiration = long("expiration")
+
+    init {
+        uniqueIndex(account, provider)
+    }
 }
 
 class OAuth2Connection(id : EntityID<Int>) : IntEntity(id) {

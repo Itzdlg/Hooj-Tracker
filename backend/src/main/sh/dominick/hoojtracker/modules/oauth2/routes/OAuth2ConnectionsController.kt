@@ -1,13 +1,20 @@
 package sh.dominick.hoojtracker.modules.oauth2.routes
 
+import com.google.api.client.auth.oauth2.TokenResponseException
 import io.javalin.community.routing.annotations.Body
 import io.javalin.community.routing.annotations.Post
 import io.javalin.http.BadRequestResponse
+import io.javalin.http.ConflictResponse
 import io.javalin.http.Context
 import io.javalin.http.ServiceUnavailableResponse
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import sh.dominick.hoojtracker.modules.accounts.data.Account
 import sh.dominick.hoojtracker.modules.accounts.data.AccountCredentials
 import sh.dominick.hoojtracker.modules.oauth2.OAuth2ConnectionsModule
+import sh.dominick.hoojtracker.modules.oauth2.data.OAuth2Connection
+import sh.dominick.hoojtracker.modules.oauth2.data.OAuth2ConnectionsTable
+import java.time.Instant
 
 object OAuth2ConnectionsController {
     data class CreateOAuth2Request(
@@ -19,7 +26,7 @@ object OAuth2ConnectionsController {
         val password: String?
     )
 
-    @Post("/signup/oauth2")
+    @Post("/accounts/signup/oauth2")
     fun createOAuth2(ctx: Context, @Body request: CreateOAuth2Request) {
         if (OAuth2ConnectionsModule.DISABLED)
             throw ServiceUnavailableResponse()
@@ -33,19 +40,43 @@ object OAuth2ConnectionsController {
             if (!provider.acceptingRegistrations)
                 throw ServiceUnavailableResponse()
 
-            val result = provider.connect(request.code) {
-                if (request.name == null)
-                    this.name = it
-                else this.name = request.name
+            val grant = try {
+                provider.requestToken(request.code)
+            } catch (ex: TokenResponseException) {
+                throw ConflictResponse("The provided code was not valid.")
             }
 
-            result.first.email = request.email
+            val exists = OAuth2ConnectionsTable.select {
+                OAuth2ConnectionsTable.providerAccountId eq grant.providerAccountId
+            }.count() > 0
+
+            if (exists)
+                throw ConflictResponse("An account already exists with this connection.")
+
+            val account = Account.new {
+                this.name = request.name ?: grant.providerAccountName
+                this.email = request.email
+
+                this.createdAt = Instant.now()
+                this.updated()
+            }
+
+            val connection = OAuth2Connection.new {
+                this.account = account
+
+                this.provider = provider
+                this.providerAccountId = grant.providerAccountId
+
+                grant.withProperties {
+                    this.refreshToken = it.refreshToken
+                }
+            }
 
             if (request.password != null)
-                AccountCredentials.new(result.first, request.password)
+                AccountCredentials.new(account, request.password)
 
             ctx.json(mapOf(
-                "account" to result.first.dto()
+                "account" to account.dto()
             ))
         }
     }

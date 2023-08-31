@@ -21,9 +21,7 @@ object OAuth2ConnectionsTable : IntIdTable("oauth2_connections") {
 
     val provider = integer("provider")
 
-    val accessToken = text("access_token", eagerLoading = true)
     val refreshToken = text("refresh_token", eagerLoading = true)
-    val expiration = long("expiration")
 
     init {
         uniqueIndex(account, provider)
@@ -42,24 +40,7 @@ class OAuth2Connection(id : EntityID<Int>) : IntEntity(id) {
 
     var providerAccountId by OAuth2ConnectionsTable.providerAccountId
 
-    var accessToken by OAuth2ConnectionsTable.accessToken
     var refreshToken by OAuth2ConnectionsTable.refreshToken
-    var expiration by OAuth2ConnectionsTable.expiration.transformInstant()
-
-    var storedCredential: StoredCredential
-        get() {
-            val obj = StoredCredential()
-            obj.setAccessToken(this.accessToken)
-            obj.setRefreshToken(this.refreshToken)
-            obj.setExpirationTimeMilliseconds(this.expiration.toEpochMilli())
-
-            return obj
-        }
-        set(value) {
-            this.accessToken = value.accessToken
-            this.refreshToken = value.refreshToken
-            this.expiration = Instant.ofEpochMilli(value.expirationTimeMilliseconds)
-        }
 }
 
 class AccountConnections(val account: Account, val connections: List<OAuth2Connection>) {

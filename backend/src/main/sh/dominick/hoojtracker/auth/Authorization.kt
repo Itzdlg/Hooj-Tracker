@@ -3,6 +3,7 @@ package sh.dominick.hoojtracker.auth
 import io.javalin.http.Context
 import io.javalin.http.ForbiddenResponse
 import io.javalin.http.UnauthorizedResponse
+import sh.dominick.hoojtracker.modules.accounts.data.Account
 
 object Authorization {
     private val handlers = mutableMapOf<String, (String) -> AuthData>()
@@ -10,7 +11,7 @@ object Authorization {
         handlers[type.lowercase()] = handler
     }
 
-    fun match(ctx: Context): AuthData {
+    operator fun get(ctx: Context): AuthData {
         val header = ctx.header("Authorization")
             ?: throw UnauthorizedResponse("Missing Authorization Header")
 
@@ -21,7 +22,8 @@ object Authorization {
         val data = header.substringAfter(" ")
 
         try {
-            return handlers[type.lowercase()]?.invoke(data) ?: return NoAuth
+            return handlers[type.lowercase()]?.invoke(data)
+                ?: throw UnauthorizedResponse("Missing valid authorization header")
         } catch (ex: ParseException) {
             throw ForbiddenResponse(ex.message ?: "Incorrect credentials.")
         }
@@ -30,5 +32,6 @@ object Authorization {
 
 open class ParseException(msg: String) : Exception(msg)
 
-open class AuthData
-object NoAuth : AuthData()
+interface AuthData {
+    val account: Account
+}

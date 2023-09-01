@@ -72,8 +72,12 @@ object OAuth2ConnectionsController {
                 }
             }
 
-            if (request.password != null)
+            if (request.password != null) {
+                if (request.email == null)
+                    throw ConflictResponse("You must provide an email to set a password.")
+
                 AccountCredentials.new(account, request.password)
+            }
 
             ctx.json(mapOf(
                 "account" to account.dto()

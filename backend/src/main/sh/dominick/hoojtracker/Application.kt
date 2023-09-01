@@ -14,6 +14,7 @@ import sh.dominick.hoojtracker.data.config.Configuration
 import sh.dominick.hoojtracker.data.config.ConfigurationTable
 import sh.dominick.hoojtracker.modules.accounts.AccountsModule
 import sh.dominick.hoojtracker.modules.oauth2.OAuth2ConnectionsModule
+import sh.dominick.hoojtracker.modules.sessions.SessionsModule
 import java.lang.reflect.Type
 
 var prettyGson = GsonBuilder()
@@ -59,7 +60,11 @@ fun main() {
             Configuration
         }
 
-        setOf(AccountsModule, OAuth2ConnectionsModule).forEach { module ->
+        setOf(
+            AccountsModule,
+            OAuth2ConnectionsModule,
+            SessionsModule
+        ).forEach { module ->
             module.load(routingPlugin, gsonBuilder, config)
         }
 

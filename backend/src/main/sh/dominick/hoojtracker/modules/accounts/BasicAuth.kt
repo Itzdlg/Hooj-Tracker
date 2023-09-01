@@ -8,7 +8,7 @@ import sh.dominick.hoojtracker.modules.accounts.data.Account
 import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
 import sh.dominick.hoojtracker.modules.accounts.data.isPassword
 
-class BasicAuth(val email: String, val hashedPassword: String, val account: Account): AuthData() {
+class BasicAuth(val email: String, val hashedPassword: String, override val account: Account): AuthData {
     class ImproperlyFormattedException : ParseException("The provided authorization has not been formatted correctly.")
     class NoAccountFoundException : ParseException("The provided authorization has not matched any accounts.")
     class IncorrectPasswordException : ParseException("The provided authorization does not match the account's password.")

@@ -8,9 +8,9 @@ import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.sql.ReferenceOption
 import sh.dominick.hoojtracker.auth.AuthData
+import sh.dominick.hoojtracker.gson
 import sh.dominick.hoojtracker.modules.accounts.data.Account
 import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
-import sh.dominick.hoojtracker.prettyGson
 import sh.dominick.hoojtracker.util.transformInstant
 import java.util.*
 
@@ -36,11 +36,11 @@ class Session(id: EntityID<UUID>): UUIDEntity(id), AuthData {
 
     var metadata by SessionsTable.metadata.transform(
         toReal = { JsonParser.parseString(it).asJsonObject },
-        toColumn = { prettyGson.toJson(it) }
+        toColumn = { gson.toJson(it) }
     )
 
     fun <T> metadata(clazz: Class<T>): T {
-        return prettyGson.fromJson(metadata, clazz)
+        return gson.fromJson(metadata, clazz)
     }
 
     fun dto() = mapOf(

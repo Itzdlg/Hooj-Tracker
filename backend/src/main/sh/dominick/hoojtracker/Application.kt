@@ -17,11 +17,14 @@ import sh.dominick.hoojtracker.modules.oauth2.OAuth2ConnectionsModule
 import sh.dominick.hoojtracker.modules.sessions.SessionsModule
 import java.lang.reflect.Type
 
-var prettyGson = GsonBuilder()
-    .setPrettyPrinting()
+var gson = GsonBuilder()
     .disableHtmlEscaping()
     .setLongSerializationPolicy(LongSerializationPolicy.STRING)
     .create()
+private set
+
+var prettyGson = GsonBuilder().create()
+private set
 
 fun main() {
     val dataSource = HikariDataSource().apply {
@@ -53,7 +56,7 @@ fun main() {
         }
 
         val routingPlugin = AnnotatedRoutingPlugin()
-        val gsonBuilder = prettyGson.newBuilder()
+        val gsonBuilder = gson.newBuilder()
 
         transaction {
             SchemaUtils.createMissingTablesAndColumns(ConfigurationTable)
@@ -68,7 +71,10 @@ fun main() {
             module.load(routingPlugin, gsonBuilder, config)
         }
 
-        prettyGson = gsonBuilder.create()
+        gson = gsonBuilder.create()
+        prettyGson = gsonBuilder
+            .setPrettyPrinting()
+            .create()
 
         config.plugins.register(routingPlugin)
     }.start(Env.PORT)

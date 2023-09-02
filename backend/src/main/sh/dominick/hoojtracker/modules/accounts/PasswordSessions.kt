@@ -9,6 +9,7 @@ import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
 import sh.dominick.hoojtracker.modules.accounts.data.isPassword
 import sh.dominick.hoojtracker.modules.sessions.SessionTransformer
 import sh.dominick.hoojtracker.modules.sessions.data.Session
+import sh.dominick.hoojtracker.util.toJsonObject
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -35,8 +36,10 @@ object PasswordSessionTransformer : SessionTransformer {
                     if (rememberMe)
                         Instant.now().plus(30, ChronoUnit.DAYS)
                     else Instant.now().plus(6, ChronoUnit.HOURS)
-                this.metadata = JsonObject()
+                this.metadata = PasswordSessionMetadata(email).toJsonObject()
             }
         }
     }
 }
+
+class PasswordSessionMetadata(val email: String)

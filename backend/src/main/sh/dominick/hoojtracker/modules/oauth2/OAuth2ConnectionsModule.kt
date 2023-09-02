@@ -57,6 +57,8 @@ object OAuth2ConnectionsModule : Module("accounts.oauth2_connections") {
     override fun load(routingPlugin: AnnotatedRoutingPlugin, gsonBuilder: GsonBuilder, javalinConfig: JavalinConfig) {
         super.load(routingPlugin, gsonBuilder, javalinConfig)
 
+        gsonBuilder.registerTypeAdapter(OAuth2SessionMetadata::class.java, OAuth2SessionMetadata.GsonSerializer)
+
         providers.map { it.apiId }.forEach {
             Configuration.define(
                 "modules.${id}.providers.${it}.client_id" to "",

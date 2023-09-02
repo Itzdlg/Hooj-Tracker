@@ -16,6 +16,8 @@ object SessionsController {
         val body = JsonParser.parseString(ctx.body()).asJsonObject
             ?: throw BadRequestResponse("Missing JSON body.")
 
+        val rememberMe = body["rememberMe"]?.asBoolean ?: false
+
         val type = body["type"].asString
             ?: throw BadRequestResponse("Missing `type` property.")
 
@@ -23,7 +25,7 @@ object SessionsController {
             ?: throw BadRequestResponse("That is not a valid session type.")
 
         val session = try {
-            handler(body)
+            handler(body, ctx, rememberMe)
         } catch (ex: IllegalArgumentException) {
             throw BadRequestResponse(ex.message ?: "Invalid JSON provided for the specified type.")
         }

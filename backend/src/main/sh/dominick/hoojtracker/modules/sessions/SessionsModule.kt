@@ -88,5 +88,5 @@ object SessionsModule : Module("sessions") {
 }
 
 fun interface SessionTransformer {
-    fun invoke(body: JsonObject, ctx: Context, rememberMe: Boolean): Session
+    operator fun invoke(body: JsonObject, ctx: Context, rememberMe: Boolean): Session
 }

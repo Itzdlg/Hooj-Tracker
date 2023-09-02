@@ -1,6 +1,5 @@
 package sh.dominick.hoojtracker.modules.oauth2.data
 
-import com.google.api.client.auth.oauth2.StoredCredential
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.id.EntityID
@@ -11,9 +10,8 @@ import sh.dominick.hoojtracker.modules.accounts.data.Account
 import sh.dominick.hoojtracker.modules.accounts.data.Account.Companion.referrersOn
 import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
 import sh.dominick.hoojtracker.modules.oauth2.OAuth2ConnectionsModule
+import sh.dominick.hoojtracker.modules.oauth2.providers.OAuth2Grant
 import sh.dominick.hoojtracker.modules.oauth2.providers.OAuth2Provider
-import sh.dominick.hoojtracker.util.transformInstant
-import java.time.Instant
 
 object OAuth2ConnectionsTable : IntIdTable("oauth2_connections") {
     val account = reference("account", AccountsTable, onDelete = ReferenceOption.CASCADE).uniqueIndex()
@@ -52,3 +50,8 @@ class AccountConnections(val account: Account, val connections: List<OAuth2Conne
 private val Account._connections: SizedIterable<OAuth2Connection>? by OAuth2Connection referrersOn OAuth2ConnectionsTable.account
 val Account.connections: AccountConnections
     get() = AccountConnections(this, _connections?.toList() ?: emptyList())
+
+val OAuth2Grant.connection
+    get() = OAuth2Connection.find {
+        OAuth2ConnectionsTable.providerAccountId eq providerAccountId
+    }.firstOrNull()

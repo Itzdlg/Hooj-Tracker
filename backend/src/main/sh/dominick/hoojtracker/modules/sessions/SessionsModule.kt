@@ -42,6 +42,7 @@ object SessionsModule : Module("sessions") {
 
     operator fun get(ctx: Context): Session? {
         val cookie = ctx.cookie(COOKIE_KEY)
+
         if (cookie.isNullOrBlank()) {
             val auth = Authorization[ctx]
             if (auth !is Session)

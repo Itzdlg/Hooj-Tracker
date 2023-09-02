@@ -13,6 +13,7 @@ import sh.dominick.hoojtracker.modules.accounts.routes.AccountsController
 import sh.dominick.hoojtracker.modules.sessions.SessionsModule
 import sh.dominick.hoojtracker.modules.sessions.data.Session
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 object AccountsModule : Module("accounts") {
     override val tables = setOf(
@@ -38,6 +39,8 @@ object AccountsModule : Module("accounts") {
             val password = it.get("password")?.asString
                 ?: throw IllegalArgumentException("The provided body is missing a password.")
 
+            val rememberMe = it.get("rememberMe")?.asBoolean ?: false
+
             transaction {
                 val account = Account.find {
                     AccountsTable.email.lowerCase() eq email.lowercase()
@@ -49,7 +52,10 @@ object AccountsModule : Module("accounts") {
                 val session = Session.new {
                     this.account = account
                     this.createdAt = Instant.now()
-                    this.expiresAt = Instant.now()
+                    this.expiresAt =
+                        if (rememberMe)
+                            Instant.now().plus(30, ChronoUnit.DAYS)
+                        else Instant.now().plus(6, ChronoUnit.HOURS)
                     this.metadata = JsonObject()
                 }
 

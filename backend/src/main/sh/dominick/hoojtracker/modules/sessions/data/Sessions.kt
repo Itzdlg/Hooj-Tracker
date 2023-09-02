@@ -5,6 +5,7 @@ import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.sql.ReferenceOption
 import sh.dominick.hoojtracker.auth.AuthData
 import sh.dominick.hoojtracker.modules.accounts.data.Account
@@ -23,7 +24,10 @@ object SessionsTable : UUIDTable("sessions") {
 }
 
 class Session(id: EntityID<UUID>): UUIDEntity(id), AuthData {
-    companion object : EntityClass<UUID, Session>(SessionsTable)
+    companion object : EntityClass<UUID, Session>(SessionsTable) {
+        override fun findById(id: EntityID<UUID>): Session?
+            = super.findById(id)?.load(Session::account)
+    }
 
     override var account by Account referencedOn SessionsTable.account
 
@@ -40,7 +44,7 @@ class Session(id: EntityID<UUID>): UUIDEntity(id), AuthData {
     }
 
     fun dto() = mapOf(
-        "id" to id.value,
+        "id" to id.value.toString(),
         "account" to account.dto(),
         "createdAt" to createdAt.toEpochMilli(),
         "expiresAt" to expiresAt.toEpochMilli()

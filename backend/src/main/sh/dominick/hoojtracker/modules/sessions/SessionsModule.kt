@@ -29,16 +29,16 @@ object SessionsModule : Module("sessions") {
         SessionsTable
     )
 
-    private val types = mutableMapOf<String, (JsonObject) -> Session>()
+    private val types = mutableMapOf<String, SessionTransformer>()
 
-    fun registerType(key: String, handler: (JsonObject) -> Session) {
+    fun registerType(key: String, handler: SessionTransformer) {
         if (types.containsKey(key.lowercase()))
             throw IllegalStateException()
 
         types[key.lowercase()] = handler
     }
 
-    fun getType(key: String): ((JsonObject) -> Session)? = types[key.lowercase()]
+    fun getType(key: String): SessionTransformer? = types[key.lowercase()]
 
     operator fun get(ctx: Context): Session? {
         val cookie = ctx.cookie(COOKIE_KEY)
@@ -85,4 +85,8 @@ object SessionsModule : Module("sessions") {
             this[sessionId] ?: throw ProviderException("That session is not valid.")
         }
     }
+}
+
+fun interface SessionTransformer {
+    fun invoke(body: JsonObject, ctx: Context, rememberMe: Boolean): Session
 }

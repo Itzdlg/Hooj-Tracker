@@ -1,0 +1,56 @@
+package sh.dominick.hoojtracker.modules.oauth2
+
+import com.google.api.client.auth.oauth2.TokenResponseException
+import com.google.gson.JsonObject
+import io.javalin.http.Context
+import org.jetbrains.exposed.sql.transactions.transaction
+import sh.dominick.hoojtracker.modules.oauth2.data.connection
+import sh.dominick.hoojtracker.modules.oauth2.providers.ProviderGrant
+import sh.dominick.hoojtracker.modules.sessions.SessionTransformer
+import sh.dominick.hoojtracker.modules.sessions.data.Session
+import java.lang.IllegalArgumentException
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+
+object OAuth2SessionTransformer : SessionTransformer {
+    override fun invoke(body: JsonObject, ctx: Context, rememberMe: Boolean): Session {
+        val provider = body["provider"]?.asString?.let {  provider ->
+            OAuth2ConnectionsModule.providers.first { it.apiId.equals(provider, ignoreCase = true) }
+        } ?: throw IllegalArgumentException("No provider was found with that name.")
+
+        val code = body["code"]?.asString
+            ?: throw IllegalArgumentException("Missing `code` property.")
+
+        val grant = try {
+            provider.requestToken(code)
+        } catch (ex: TokenResponseException) {
+            throw IllegalArgumentException("Invalid `code` provided.")
+        }
+
+        return transaction {
+            grant.connection?.refreshToken = grant.withProperties { props ->
+                props.refreshToken
+            }
+
+            Session.new {
+                account =
+                    grant.connection?.account ?: throw IllegalArgumentException("No account was connected with that grant.")
+                createdAt = Instant.now()
+                expiresAt =
+                    if (rememberMe)
+                        Instant.now().plus(30, ChronoUnit.DAYS)
+                    else
+                        Instant.now().plus(6, ChronoUnit.HOURS)
+                metadata = JsonObject().apply {
+                    grant.withProperties { props ->
+                        addProperty("accessToken", props.accessToken)
+                        addProperty("refreshToken", props.refreshToken)
+                        addProperty("expiration", props.expiration.toEpochMilli())
+                        if (grant is ProviderGrant)
+                            addProperty("provider", grant.provider.id)
+                    }
+                }
+            }
+        }
+    }
+}

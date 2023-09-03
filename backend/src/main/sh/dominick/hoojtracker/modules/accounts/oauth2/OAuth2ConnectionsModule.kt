@@ -8,7 +8,7 @@ import sh.dominick.hoojtracker.modules.Module
 import sh.dominick.hoojtracker.modules.accounts.oauth2.data.OAuth2ConnectionsTable
 import sh.dominick.hoojtracker.modules.accounts.oauth2.providers.DiscordOAuth2Provider
 import sh.dominick.hoojtracker.modules.accounts.oauth2.providers.OAuth2Provider
-import sh.dominick.hoojtracker.modules.accounts.oauth2.routes.OAuth2ConnectionsController
+import sh.dominick.hoojtracker.modules.accounts.oauth2.routes.OAuth2ConnectionRoutes
 import sh.dominick.hoojtracker.modules.sessions.SessionsModule
 
 object OAuth2ConnectionsModule : Module("accounts.oauth2_connections") {
@@ -19,7 +19,7 @@ object OAuth2ConnectionsModule : Module("accounts.oauth2_connections") {
     )
 
     override val routes = setOf(
-        OAuth2ConnectionsController
+        OAuth2ConnectionRoutes
     )
 
     private val clientId = { provider: OAuth2Provider ->

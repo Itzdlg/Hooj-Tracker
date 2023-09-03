@@ -12,7 +12,7 @@ import sh.dominick.hoojtracker.modules.accounts.passwords.data.AccountPassword
 import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
 
 @Endpoints("/accounts")
-object AccountsController {
+object AccountRoutes {
     data class CreateNormalRequest(
         val email: String,
         val name: String,

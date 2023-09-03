@@ -10,7 +10,7 @@ import sh.dominick.hoojtracker.modules.sessions.SessionsModule
 import java.lang.IllegalArgumentException
 
 @Endpoints("/sessions")
-object SessionsController {
+object SessionRoutes {
     @Post
     fun create(ctx: Context) {
         val body = JsonParser.parseString(ctx.body()).asJsonObject

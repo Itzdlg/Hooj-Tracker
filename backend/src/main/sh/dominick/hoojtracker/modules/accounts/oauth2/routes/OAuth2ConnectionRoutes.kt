@@ -15,7 +15,7 @@ import sh.dominick.hoojtracker.modules.accounts.oauth2.OAuth2ConnectionsModule
 import sh.dominick.hoojtracker.modules.accounts.oauth2.data.OAuth2Connection
 import sh.dominick.hoojtracker.modules.accounts.oauth2.data.OAuth2ConnectionsTable
 
-object OAuth2ConnectionsController {
+object OAuth2ConnectionRoutes {
     data class CreateOAuth2Request(
         val provider: String,
         val code: String,

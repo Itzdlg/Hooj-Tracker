@@ -13,7 +13,7 @@ import sh.dominick.hoojtracker.modules.accounts.passwords.data.AccountPasswordsT
 import sh.dominick.hoojtracker.modules.accounts.data.AccountDTO
 import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
 import sh.dominick.hoojtracker.modules.accounts.oauth2.data.OAuth2ConnectionsTable
-import sh.dominick.hoojtracker.modules.accounts.routes.AccountsController
+import sh.dominick.hoojtracker.modules.accounts.routes.AccountRoutes
 
 class CreateAccountTests {
     companion object {
@@ -55,13 +55,13 @@ class CreateAccountTests {
 
     @Test
     fun `Create a Normal Account Succeeds`() {
-        val request = AccountsController.CreateNormalRequest(
+        val request = AccountRoutes.CreateNormalRequest(
             email = newEmail(),
             name = newName(),
             password = "1234567!"
         )
 
-        AccountsController.create(ctx, request)
+        AccountRoutes.create(ctx, request)
 
         verify {
             ctx.json(withArg {
@@ -72,13 +72,13 @@ class CreateAccountTests {
 
     @Test
     fun `Create a Normal Account With Uppercase Email Does Lowercase`() {
-        val request = AccountsController.CreateNormalRequest(
+        val request = AccountRoutes.CreateNormalRequest(
             email = newEmail().uppercase(),
             name = newName(),
             password = "1234567!"
         )
 
-        AccountsController.create(ctx, request)
+        AccountRoutes.create(ctx, request)
 
         verify { ctx.json(withArg {
             val dto = assertAndReadAccount(it)
@@ -89,13 +89,13 @@ class CreateAccountTests {
 
     @Test
     fun `Create a Normal Account With Password Includes Password Login Method`() {
-        val request = AccountsController.CreateNormalRequest(
+        val request = AccountRoutes.CreateNormalRequest(
             email = newEmail(),
             name = newName(),
             password = "1234567!"
         )
 
-        AccountsController.create(ctx, request)
+        AccountRoutes.create(ctx, request)
 
         verify { ctx.json(withArg {
             val dto = assertAndReadAccount(it)
@@ -107,8 +107,8 @@ class CreateAccountTests {
     fun `Create a Normal Account With Conflicting Email Throws ConflictResponse`() {
         val email = newEmail()
 
-        AccountsController.create(
-            ctx, AccountsController.CreateNormalRequest(
+        AccountRoutes.create(
+            ctx, AccountRoutes.CreateNormalRequest(
             email = email,
             name = newName(),
             password = "1234567!"
@@ -118,8 +118,8 @@ class CreateAccountTests {
             assertAndReadAccount(it)
         }) }
 
-        AccountsController.create(
-            ctx, AccountsController.CreateNormalRequest(
+        AccountRoutes.create(
+            ctx, AccountRoutes.CreateNormalRequest(
             email = email,
             name = newName(),
             password = "1234567!"

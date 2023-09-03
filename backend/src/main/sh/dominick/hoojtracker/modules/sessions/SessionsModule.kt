@@ -13,7 +13,7 @@ import sh.dominick.hoojtracker.modules.Module
 import sh.dominick.hoojtracker.modules.accounts.oauth2.providers.ProviderException
 import sh.dominick.hoojtracker.modules.sessions.data.Session
 import sh.dominick.hoojtracker.modules.sessions.data.SessionsTable
-import sh.dominick.hoojtracker.modules.sessions.routes.SessionsController
+import sh.dominick.hoojtracker.modules.sessions.routes.SessionRoutes
 import java.lang.IllegalArgumentException
 import java.time.Instant
 import java.util.UUID
@@ -22,7 +22,7 @@ object SessionsModule : Module("sessions") {
     const val COOKIE_KEY = "session"
 
     override val routes = setOf(
-        SessionsController
+        SessionRoutes
     )
 
     override val tables = setOf(

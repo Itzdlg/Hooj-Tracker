@@ -26,8 +26,8 @@ class URLQuerySieveTests {
         // for Exposed to check #equals on queries.
 
         private val filters = setOf(
-            Filter.Parameter("name", TestTable.name, String::class.java),
-            Filter.Parameter("age", TestTable.age, Int::class.java)
+            Filter.Parameter(TestTable.name),
+            Filter.Parameter(TestTable.age)
         )
 
         private var testName = "John"
@@ -66,52 +66,52 @@ class URLQuerySieveTests {
     }
 
     @Test
-    fun `Unspecified Method String Filter Returns LIKE Query`() {
-        val ctx = mockk<Context>(relaxed = true)
-
-        every { ctx.queryParam("f:name") } returns testName
-
-        val filter = Filter.of(ctx, filters, 25)
-
-        assertQueryEquals(filter.query, Op.TRUE and (TestTable.name like "%${testName}%"))
-    }
-
-    @Test
-    fun `Unspecified Method Integer Filter Returns EQ Query`() {
+    fun `Unspecified Filter Returns EQ Query`() {
         val ctx = mockk<Context>(relaxed = true)
 
         every { ctx.queryParam("f:age") } returns "$testAge"
 
         val filter = Filter.of(ctx, filters, 25)
 
-        assertQueryEquals(filter.query, Op.TRUE and (TestTable.age eq testAge))
+        assertQueryEquals(filter.query, TestTable.age eq testAge)
     }
 
     @Test
-    fun `LT Filter Returns LTE Query`() {
+    fun `Like Filter Returns LIKE Query`() {
         val ctx = mockk<Context>(relaxed = true)
 
-        every { ctx.queryParam("f:age") } returns "lt:${testAge}"
+        every { ctx.queryParam("f:name") } returns "like:%${testName}%"
 
         val filter = Filter.of(ctx, filters, 25)
 
-        assertQueryEquals(filter.query, Op.TRUE and (TestTable.age lessEq testAge))
+        assertQueryEquals(filter.query, TestTable.name like "%${testName}%")
     }
 
     @Test
-    fun `GT Filter Returns GTE Query`() {
+    fun `LTE Filter Returns LTE Query`() {
         val ctx = mockk<Context>(relaxed = true)
 
-        every { ctx.queryParam("f:age") } returns "gt:${testAge}"
+        every { ctx.queryParam("f:age") } returns "lte:${testAge}"
 
         val filter = Filter.of(ctx, filters, 25)
 
-        assertQueryEquals(filter.query, Op.TRUE and (TestTable.age greaterEq testAge))
+        assertQueryEquals(filter.query, TestTable.age lessEq testAge)
+    }
+
+    @Test
+    fun `GTE Filter Returns GTE Query`() {
+        val ctx = mockk<Context>(relaxed = true)
+
+        every { ctx.queryParam("f:age") } returns "gte:${testAge}"
+
+        val filter = Filter.of(ctx, filters, 25)
+
+        assertQueryEquals(filter.query, TestTable.age greaterEq testAge)
     }
 
     private fun complexQueryTest(ctx: Context): Filter {
-        every { ctx.queryParam("f:name") } returns testName
-        every { ctx.queryParam("f:age") } returns "gt:${testAge}"
+        every { ctx.queryParam("f:name") } returns "like:%${testName}%"
+        every { ctx.queryParam("f:age") } returns "gte:${testAge}"
 
         val filter = Filter.of(ctx, filters, 25)
 
@@ -123,15 +123,17 @@ class URLQuerySieveTests {
         val ctx = mockk<Context>(relaxed = true)
         val filter = complexQueryTest(ctx)
 
-        assertQueryEquals(filter.query, Op.TRUE and (TestTable.name like "%${testName}%") and (TestTable.age greaterEq testAge))
+        assertQueryEquals(filter.query, (TestTable.name like "%${testName}%") and (TestTable.age greaterEq testAge))
     }
 
     @Test
     fun `Match All Filter Returns AND Queries`() {
         val ctx = mockk<Context>(relaxed = true)
+
+        every { ctx.queryParam("match") } returns "all"
         val filter = complexQueryTest(ctx)
 
-        assertQueryEquals(filter.query, Op.TRUE and (TestTable.name like "%${testName}%") and (TestTable.age greaterEq testAge))
+        assertQueryEquals(filter.query, (TestTable.name like "%${testName}%") and (TestTable.age greaterEq testAge))
     }
 
     @Test
@@ -141,6 +143,6 @@ class URLQuerySieveTests {
         every { ctx.queryParam("match") } returns "any"
         val filter = complexQueryTest(ctx)
 
-        assertQueryEquals(filter.query, Op.FALSE or (TestTable.name like "%${testName}%") or (TestTable.age greaterEq testAge))
+        assertQueryEquals(filter.query, (TestTable.name like "%${testName}%") or (TestTable.age greaterEq testAge))
     }
 }

@@ -4,20 +4,35 @@ import io.javalin.http.Context
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.greaterEq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.lessEq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 
 class Filter(val query: Op<Boolean>, val limit: Int, val offset: Long = 0) {
     data class Parameter<TCol>(
-        val name: String,
         val column: Column<TCol>,
-        val columnClass: Class<TCol>
+        val name: String = column.name
     )
 
-    enum class Method {
-        LIKE, EQ, LT, GT,
+    enum class Method(val query: (Column<*>, String) -> Op<Boolean>, val aliases: Set<String> = setOf()) {
+        NOT_LIKE({ col, v ->
+            val pattern = LikePattern(v)
+            LikeEscapeOp(col, stringParam(pattern.pattern), false, pattern.escapeChar)
+        }, setOf("!like")),
+        LIKE({ col, v ->
+            val pattern = LikePattern(v)
+            LikeEscapeOp(col, stringParam(pattern.pattern), true, pattern.escapeChar)
+        }),
+
+        NOT_EQ({ col, v ->
+            NeqOp(col, QueryParameter(v, col.columnType))
+        }, setOf("!eq", "neq")),
+        EQ({ col, v ->
+            EqOp(col, QueryParameter(v, col.columnType))
+        }),
+
+        LT({ col, v -> LessOp(col, QueryParameter(v, col.columnType))}),
+        LTE({ col, v -> LessEqOp(col, QueryParameter(v, col.columnType))}),
+
+        GT({ col, v -> GreaterOp(col, QueryParameter(v, col.columnType))}),
+        GTE({ col, v -> GreaterEqOp(col, QueryParameter(v, col.columnType))}),
     }
 
     enum class Match(val joinQuery: (Op<Boolean>, Op<Boolean>) -> (Op<Boolean>)) {
@@ -30,7 +45,9 @@ class Filter(val query: Op<Boolean>, val limit: Int, val offset: Long = 0) {
             ctx: Context,
             filters: Set<Parameter<*>>,
             maxLimit: Int,
-            defaultLimit: Int = maxLimit): Filter {
+            defaultLimit: Int = maxLimit,
+            queryModifier: (Op<Boolean>) -> Op<Boolean> = { it }
+        ): Filter {
             val limit = (ctx.queryParam("limit")?.toIntOrNull() ?: defaultLimit).coerceAtMost(maxLimit)
             val offset = ctx.queryParam("offset")?.toLongOrNull() ?: 0
 
@@ -40,15 +57,7 @@ class Filter(val query: Op<Boolean>, val limit: Int, val offset: Long = 0) {
                 else -> Match.ALL
             }
 
-/*            val joinQuery: (Op<Boolean>, Op<Boolean>) -> (Op<Boolean>) = when (ctx.queryParam("match")?.lowercase()) {
-                "all" -> { a, b -> a and b }
-                "any" -> { a, b -> a or b }
-
-                else -> { a, b -> a and b }
-            }*/
-
-            var query: Op<Boolean>
-                = if (matchType == Match.ANY) Op.FALSE else Op.TRUE
+            val queries: MutableList<Op<Boolean>> = mutableListOf()
 
             for (filter in filters) {
                 val parameter = ctx.queryParam("f:${filter.name}") ?: continue
@@ -56,46 +65,32 @@ class Filter(val query: Op<Boolean>, val limit: Int, val offset: Long = 0) {
                 if (parameter.isBlank())
                     continue
 
-                var method = when (filter.columnClass) {
-                    String::class.java -> Method.LIKE
-                    else -> Method.EQ
-                }
-
+                var method = Method.EQ
                 var value = parameter
 
                 for (possible in Method.values()) {
-                    if (parameter.startsWith(possible.name + ":", ignoreCase = true)) {
-                        method = possible
-                        value = parameter.substring((possible.name + ":").length)
+                    val aliases = possible.aliases.plus(possible.name)
+
+                    for (alias in aliases) {
+                        if (parameter.startsWith("$alias:", ignoreCase = true)) {
+                            method = possible
+                            value = parameter.substring((possible.name + ":").length)
+                        }
                     }
                 }
 
-                val addon = when (method) {
-                    Method.LIKE -> when (filter.columnClass) {
-                        String::class.java -> (filter.column as Column<String>) like "%${value}%"
-                        else -> Op.TRUE
-                    }
-                    Method.EQ -> when (filter.columnClass) {
-                        Int::class.java -> (filter.column as Column<Int>) eq value.toInt()
-                        Long::class.java -> (filter.column as Column<Long> eq value.toLong())
-                        else -> Op.TRUE
-                    }
-                    Method.LT -> when (filter.columnClass) {
-                        Int::class.java -> (filter.column as Column<Int>) lessEq value.toInt()
-                        Long::class.java -> (filter.column as Column<Long> lessEq value.toLong())
-                        else -> Op.TRUE
-                    }
-                    Method.GT -> when (filter.columnClass) {
-                        Int::class.java -> (filter.column as Column<Int>) greaterEq  value.toInt()
-                        Long::class.java -> (filter.column as Column<Long> greaterEq value.toLong())
-                        else -> Op.TRUE
-                    }
-                }
-
-                query = matchType.joinQuery(query, addon)
+                val addon = method.query(filter.column, value)
+                queries += addon
             }
 
-            return Filter(query, limit, offset)
+            if (queries.isEmpty())
+                return Filter(queryModifier(Op.TRUE), limit, offset)
+
+            var query = queries[0]
+            for (i in 1 until queries.size)
+                query = matchType.joinQuery(query, queries[i])
+
+            return Filter(queryModifier(query), limit, offset)
         }
     }
 }

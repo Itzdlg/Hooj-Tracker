@@ -11,12 +11,10 @@ import org.jetbrains.exposed.sql.insert
 import sh.dominick.hoojtracker.modules.accounts.data.Account.Companion.referrersOn
 import sh.dominick.hoojtracker.data.config.Configuration
 import sh.dominick.hoojtracker.util.transformInstant
-import java.time.Instant
 
 object AccountCredentialsTable : IntIdTable("account_credentials") {
     val account = reference("account", AccountsTable, onDelete = ReferenceOption.CASCADE)
-
-    val createdAt = long("created_at")
+    val createdAt = long("created_at").clientDefault { System.currentTimeMillis() }
 
     val argon2Output = text("argon2_output", eagerLoading = true)
 }
@@ -43,15 +41,12 @@ class AccountCredentials(id: EntityID<Int>) : IntEntity(id) {
 
             AccountCredentialsTable.insert {
                 it[AccountCredentialsTable.account] = account.id
-                it[createdAt] = Instant.now().toEpochMilli()
-
                 it[argon2Output] = hashedPassword
             }
         }
     }
 
     val account by Account referencedOn AccountCredentialsTable.account
-
     val createdAt by AccountCredentialsTable.createdAt.transformInstant()
 
     val argon2Output by AccountCredentialsTable.argon2Output

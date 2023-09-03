@@ -10,7 +10,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import sh.dominick.hoojtracker.modules.accounts.data.Account
 import sh.dominick.hoojtracker.modules.accounts.data.AccountCredentials
 import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
-import java.time.Instant
 
 @Endpoints("/accounts")
 object AccountsController {
@@ -29,9 +28,6 @@ object AccountsController {
             val account = Account.new {
                 this.email = request.email.lowercase()
                 this.name = request.name
-
-                this.createdAt = Instant.now()
-                this.updated()
             }
 
             AccountCredentials.new(account, request.password)

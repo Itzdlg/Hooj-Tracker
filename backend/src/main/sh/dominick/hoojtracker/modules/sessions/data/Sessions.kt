@@ -17,10 +17,10 @@ import java.util.*
 object SessionsTable : UUIDTable("sessions") {
     val account = reference("account", AccountsTable, onDelete = ReferenceOption.CASCADE)
 
-    val createdAt = long("created_at")
+    val createdAt = long("created_at").clientDefault { System.currentTimeMillis() }
     val expiresAt = long("expires_at")
 
-    val metadata = text("metadata", eagerLoading = true)
+    val metadata = text("metadata", eagerLoading = true).clientDefault { "{}" }
 }
 
 class Session(id: EntityID<UUID>): UUIDEntity(id), AuthData {

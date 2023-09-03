@@ -14,7 +14,6 @@ import sh.dominick.hoojtracker.modules.accounts.data.AccountCredentials
 import sh.dominick.hoojtracker.modules.oauth2.OAuth2ConnectionsModule
 import sh.dominick.hoojtracker.modules.oauth2.data.OAuth2Connection
 import sh.dominick.hoojtracker.modules.oauth2.data.OAuth2ConnectionsTable
-import java.time.Instant
 
 object OAuth2ConnectionsController {
     data class CreateOAuth2Request(
@@ -56,9 +55,6 @@ object OAuth2ConnectionsController {
             val account = Account.new {
                 this.name = request.name ?: grant.providerAccountName
                 this.email = request.email
-
-                this.createdAt = Instant.now()
-                this.updated()
             }
 
             val connection = OAuth2Connection.new {

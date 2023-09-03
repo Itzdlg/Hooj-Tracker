@@ -7,6 +7,6 @@ import java.time.Instant
 fun Column<Long>.transformInstant(): ColumnWithTransform<Long, Instant> =
     ColumnWithTransform(
         column = this,
-        toReal = Instant::ofEpochSecond,
-        toColumn = Instant::getEpochSecond
+        toReal = Instant::ofEpochMilli,
+        toColumn = Instant::toEpochMilli
     )

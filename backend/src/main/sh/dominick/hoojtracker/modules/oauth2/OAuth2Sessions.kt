@@ -37,7 +37,6 @@ object OAuth2SessionTransformer : SessionTransformer {
             Session.new {
                 account =
                     grant.connection?.account ?: throw IllegalArgumentException("No account was connected with that grant.")
-                createdAt = Instant.now()
                 expiresAt =
                     if (rememberMe)
                         Instant.now().plus(30, ChronoUnit.DAYS)

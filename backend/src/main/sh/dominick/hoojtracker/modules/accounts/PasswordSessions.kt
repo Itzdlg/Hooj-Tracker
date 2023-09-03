@@ -31,7 +31,6 @@ object PasswordSessionTransformer : SessionTransformer {
 
             Session.new {
                 this.account = account
-                this.createdAt = Instant.now()
                 this.expiresAt =
                     if (rememberMe)
                         Instant.now().plus(30, ChronoUnit.DAYS)

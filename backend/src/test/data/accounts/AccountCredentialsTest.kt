@@ -7,7 +7,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.BeforeClass
 import org.junit.Test
 import sh.dominick.hoojtracker.modules.accounts.data.*
-import java.time.Instant
 
 class AccountCredentialsTest {
     companion object {
@@ -25,9 +24,6 @@ class AccountCredentialsTest {
         val account = Account.new {
             this.email = "test"
             this.name = "test"
-
-            this.createdAt = Instant.now()
-            this.updated()
         }
 
         if (password != null)

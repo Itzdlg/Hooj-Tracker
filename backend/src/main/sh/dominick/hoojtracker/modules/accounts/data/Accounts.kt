@@ -7,15 +7,14 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.transactions.transaction
 import sh.dominick.hoojtracker.util.transformInstant
-import java.time.Instant
 import java.util.*
 
 object AccountsTable : UUIDTable("accounts") {
     val email = varchar("email", 320).nullable()
     val name = varchar("name", 48)
 
-    val createdAt = long("created_at")
-    val updatedAt = long("updated_at")
+    val createdAt = long("created_at").clientDefault { System.currentTimeMillis() }
+    val updatedAt = long("updated_at").clientDefault { System.currentTimeMillis() }
 }
 
 class Account(id: EntityID<UUID>) : UUIDEntity(id) {
@@ -36,10 +35,6 @@ class Account(id: EntityID<UUID>) : UUIDEntity(id) {
 
     var createdAt by AccountsTable.createdAt.transformInstant()
     var updatedAt by AccountsTable.updatedAt.transformInstant()
-
-    fun updated() {
-        updatedAt = Instant.now()
-    }
 
     fun dto() = AccountDTO(
         id = id.value,

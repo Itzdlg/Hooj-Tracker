@@ -8,7 +8,7 @@ import io.javalin.http.Context
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.transactions.transaction
 import sh.dominick.hoojtracker.modules.accounts.data.Account
-import sh.dominick.hoojtracker.modules.accounts.data.AccountCredentials
+import sh.dominick.hoojtracker.modules.accounts.passwords.data.AccountPassword
 import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
 
 @Endpoints("/accounts")
@@ -30,7 +30,7 @@ object AccountsController {
                 this.name = request.name
             }
 
-            AccountCredentials.new(account, request.password)
+            AccountPassword.new(account, request.password)
 
             ctx.json(
                 mapOf("account" to account.dto())

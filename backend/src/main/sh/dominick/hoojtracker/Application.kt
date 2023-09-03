@@ -13,7 +13,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import sh.dominick.hoojtracker.data.config.Configuration
 import sh.dominick.hoojtracker.data.config.ConfigurationTable
 import sh.dominick.hoojtracker.modules.accounts.AccountsModule
-import sh.dominick.hoojtracker.modules.oauth2.OAuth2ConnectionsModule
 import sh.dominick.hoojtracker.modules.sessions.SessionsModule
 import java.lang.reflect.Type
 
@@ -65,7 +64,6 @@ fun main() {
 
         setOf(
             AccountsModule,
-            OAuth2ConnectionsModule,
             SessionsModule
         ).forEach { module ->
             module.load(routingPlugin, gsonBuilder, config)

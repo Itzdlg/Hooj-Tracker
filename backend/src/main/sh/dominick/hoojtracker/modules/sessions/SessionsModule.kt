@@ -10,7 +10,7 @@ import io.javalin.http.ForbiddenResponse
 import org.jetbrains.exposed.sql.transactions.transaction
 import sh.dominick.hoojtracker.auth.Authorization
 import sh.dominick.hoojtracker.modules.Module
-import sh.dominick.hoojtracker.modules.oauth2.providers.ProviderException
+import sh.dominick.hoojtracker.modules.accounts.oauth2.providers.ProviderException
 import sh.dominick.hoojtracker.modules.sessions.data.Session
 import sh.dominick.hoojtracker.modules.sessions.data.SessionsTable
 import sh.dominick.hoojtracker.modules.sessions.routes.SessionsController

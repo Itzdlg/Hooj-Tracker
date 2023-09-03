@@ -7,15 +7,16 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.BeforeClass
 import org.junit.Test
 import sh.dominick.hoojtracker.modules.accounts.data.*
+import sh.dominick.hoojtracker.modules.accounts.passwords.data.*
 
-class AccountCredentialsTest {
+class AccountPasswordsTest {
     companion object {
         @BeforeClass
         @JvmStatic
         fun setup() {
             TestingDatabase.connect(
                 AccountsTable,
-                AccountCredentialsTable
+                AccountPasswordsTable
             )
         }
     }
@@ -27,7 +28,7 @@ class AccountCredentialsTest {
         }
 
         if (password != null)
-            AccountCredentials.new(account, password)
+            AccountPassword.new(account, password)
 
         return account
     }
@@ -37,7 +38,7 @@ class AccountCredentialsTest {
         transaction {
             val account = createAccount("1")
 
-            val credentials = account.activeCredentials
+            val credentials = account.activePassword
             assertTrue(credentials != null)
         }
     }
@@ -66,7 +67,7 @@ class AccountCredentialsTest {
         transaction {
             val account = createAccount(null)
 
-            val credentials = account.activeCredentials
+            val credentials = account.activePassword
             assertTrue(credentials == null)
         }
     }
@@ -76,16 +77,16 @@ class AccountCredentialsTest {
         transaction {
             val account = createAccount(null)
 
-            AccountCredentials.new(account, "1")
-            AccountCredentials.new(account, "2")
-            AccountCredentials.new(account, "3")
+            AccountPassword.new(account, "1")
+            AccountPassword.new(account, "2")
+            AccountPassword.new(account, "3")
 
             assertTrue(
                 "An incorrect number of credentials were saved",
-                account.credentials?.count() == 3L
+                account.passwords?.count() == 3L
             )
 
-            val credentials = account.activeCredentials
+            val credentials = account.activePassword
             assertTrue(
                 "No active credentials were returned",
                 credentials != null

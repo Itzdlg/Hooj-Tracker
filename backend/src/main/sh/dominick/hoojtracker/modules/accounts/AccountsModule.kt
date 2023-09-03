@@ -1,32 +1,24 @@
 package sh.dominick.hoojtracker.modules.accounts
 
-import com.google.gson.GsonBuilder
-import io.javalin.community.routing.annotations.AnnotatedRoutingPlugin
-import io.javalin.config.JavalinConfig
-import sh.dominick.hoojtracker.auth.Authorization
 import sh.dominick.hoojtracker.modules.Module
-import sh.dominick.hoojtracker.modules.accounts.data.AccountCredentialsTable
 import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
+import sh.dominick.hoojtracker.modules.accounts.oauth2.OAuth2ConnectionsModule
+import sh.dominick.hoojtracker.modules.accounts.passwords.PasswordsModule
+import sh.dominick.hoojtracker.modules.accounts.passwords.data.AccountPasswordsTable
 import sh.dominick.hoojtracker.modules.accounts.routes.AccountsController
-import sh.dominick.hoojtracker.modules.sessions.SessionsModule
 
 object AccountsModule : Module("accounts") {
     override val tables = setOf(
         AccountsTable,
-        AccountCredentialsTable
+        AccountPasswordsTable
     )
 
     override val routes = setOf(
         AccountsController
     )
 
-    override fun load(routingPlugin: AnnotatedRoutingPlugin, gsonBuilder: GsonBuilder, javalinConfig: JavalinConfig) {
-        super.load(routingPlugin, gsonBuilder, javalinConfig)
-
-        Authorization.registerType("Basic") {
-            BasicAuth.match(it)
-        }
-
-        SessionsModule.registerType("password", PasswordSessionTransformer)
-    }
+    override val submodules = setOf(
+        PasswordsModule,
+        OAuth2ConnectionsModule
+    )
 }

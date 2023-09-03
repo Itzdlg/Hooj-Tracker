@@ -1,4 +1,4 @@
-package sh.dominick.hoojtracker.modules.accounts
+package sh.dominick.hoojtracker.modules.accounts.passwords
 
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -6,7 +6,7 @@ import sh.dominick.hoojtracker.auth.AuthData
 import sh.dominick.hoojtracker.auth.ParseException
 import sh.dominick.hoojtracker.modules.accounts.data.Account
 import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
-import sh.dominick.hoojtracker.modules.accounts.data.isPassword
+import sh.dominick.hoojtracker.modules.accounts.passwords.data.isPassword
 
 class BasicAuth(val email: String, val hashedPassword: String, override val account: Account): AuthData {
     class ImproperlyFormattedException : ParseException("The provided authorization has not been formatted correctly.")

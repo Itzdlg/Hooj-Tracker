@@ -1,12 +1,12 @@
-package sh.dominick.hoojtracker.modules.oauth2
+package sh.dominick.hoojtracker.modules.accounts.oauth2
 
 import com.google.api.client.auth.oauth2.TokenResponseException
 import com.google.gson.*
 import io.javalin.http.Context
 import org.jetbrains.exposed.sql.transactions.transaction
-import sh.dominick.hoojtracker.modules.oauth2.data.connection
-import sh.dominick.hoojtracker.modules.oauth2.providers.OAuth2Grant
-import sh.dominick.hoojtracker.modules.oauth2.providers.ProviderGrant
+import sh.dominick.hoojtracker.modules.accounts.oauth2.data.connection
+import sh.dominick.hoojtracker.modules.accounts.oauth2.providers.OAuth2Grant
+import sh.dominick.hoojtracker.modules.accounts.oauth2.providers.ProviderGrant
 import sh.dominick.hoojtracker.modules.sessions.SessionTransformer
 import sh.dominick.hoojtracker.modules.sessions.data.Session
 import sh.dominick.hoojtracker.util.toJsonObject

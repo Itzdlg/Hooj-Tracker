@@ -1,4 +1,4 @@
-package sh.dominick.hoojtracker.modules.oauth2.data
+package sh.dominick.hoojtracker.modules.accounts.oauth2.data
 
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.IntEntity
@@ -9,9 +9,9 @@ import org.jetbrains.exposed.sql.SizedIterable
 import sh.dominick.hoojtracker.modules.accounts.data.Account
 import sh.dominick.hoojtracker.modules.accounts.data.Account.Companion.referrersOn
 import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
-import sh.dominick.hoojtracker.modules.oauth2.OAuth2ConnectionsModule
-import sh.dominick.hoojtracker.modules.oauth2.providers.OAuth2Grant
-import sh.dominick.hoojtracker.modules.oauth2.providers.OAuth2Provider
+import sh.dominick.hoojtracker.modules.accounts.oauth2.OAuth2ConnectionsModule
+import sh.dominick.hoojtracker.modules.accounts.oauth2.providers.OAuth2Grant
+import sh.dominick.hoojtracker.modules.accounts.oauth2.providers.OAuth2Provider
 
 object OAuth2ConnectionsTable : IntIdTable("oauth2_connections") {
     val account = reference("account", AccountsTable, onDelete = ReferenceOption.CASCADE).uniqueIndex()
@@ -52,6 +52,6 @@ val Account.connections: AccountConnections
     get() = AccountConnections(this, _connections?.toList() ?: emptyList())
 
 val OAuth2Grant.connection
-    get() = OAuth2Connection.find {
-        OAuth2ConnectionsTable.providerAccountId eq providerAccountId
+    get() = sh.dominick.hoojtracker.modules.accounts.oauth2.data.OAuth2Connection.find {
+        sh.dominick.hoojtracker.modules.accounts.oauth2.data.OAuth2ConnectionsTable.providerAccountId eq providerAccountId
     }.firstOrNull()

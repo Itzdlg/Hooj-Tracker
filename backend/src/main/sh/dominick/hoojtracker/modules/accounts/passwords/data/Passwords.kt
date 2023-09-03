@@ -1,4 +1,4 @@
-package sh.dominick.hoojtracker.modules.accounts.data
+package sh.dominick.hoojtracker.modules.accounts.passwords.data
 
 import de.mkammerer.argon2.Argon2Factory
 import org.jetbrains.exposed.dao.EntityClass
@@ -10,17 +10,19 @@ import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.insert
 import sh.dominick.hoojtracker.modules.accounts.data.Account.Companion.referrersOn
 import sh.dominick.hoojtracker.data.config.Configuration
+import sh.dominick.hoojtracker.modules.accounts.data.Account
+import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
 import sh.dominick.hoojtracker.util.transformInstant
 
-object AccountCredentialsTable : IntIdTable("account_credentials") {
+object AccountPasswordsTable : IntIdTable("account_passwords") {
     val account = reference("account", AccountsTable, onDelete = ReferenceOption.CASCADE)
     val createdAt = long("created_at").clientDefault { System.currentTimeMillis() }
 
     val argon2Output = text("argon2_output", eagerLoading = true)
 }
 
-class AccountCredentials(id: EntityID<Int>) : IntEntity(id) {
-    companion object : EntityClass<Int, AccountCredentials>(AccountCredentialsTable) {
+class AccountPassword(id: EntityID<Int>) : IntEntity(id) {
+    companion object : EntityClass<Int, AccountPassword>(AccountPasswordsTable) {
         fun new(account: Account, password: String) {
             val argon2 = Argon2Factory.create(
                 Configuration.PASSWORD_SALT_LENGTH,
@@ -39,17 +41,17 @@ class AccountCredentials(id: EntityID<Int>) : IntEntity(id) {
                 argon2.wipeArray(passwordArray)
             }
 
-            AccountCredentialsTable.insert {
-                it[AccountCredentialsTable.account] = account.id
+            AccountPasswordsTable.insert {
+                it[AccountPasswordsTable.account] = account.id
                 it[argon2Output] = hashedPassword
             }
         }
     }
 
-    val account by Account referencedOn AccountCredentialsTable.account
-    val createdAt by AccountCredentialsTable.createdAt.transformInstant()
+    val account by Account referencedOn AccountPasswordsTable.account
+    val createdAt by AccountPasswordsTable.createdAt.transformInstant()
 
-    val argon2Output by AccountCredentialsTable.argon2Output
+    val argon2Output by AccountPasswordsTable.argon2Output
 
     fun isPassword(password: String): Boolean {
         val argon2 = Argon2Factory.create()
@@ -63,9 +65,9 @@ class AccountCredentials(id: EntityID<Int>) : IntEntity(id) {
     }
 }
 
-val Account.credentials: SizedIterable<AccountCredentials>? by AccountCredentials referrersOn AccountCredentialsTable.account
-val Account.activeCredentials: AccountCredentials?
-    get() = credentials?.maxByOrNull { it.createdAt }
+val Account.passwords: SizedIterable<AccountPassword>? by AccountPassword referrersOn AccountPasswordsTable.account
+val Account.activePassword: AccountPassword?
+    get() = passwords?.maxByOrNull { it.createdAt }
 
 fun Account.isPassword(password: String): Boolean
-    = this.activeCredentials?.isPassword(password) ?: false
+    = this.activePassword?.isPassword(password) ?: false

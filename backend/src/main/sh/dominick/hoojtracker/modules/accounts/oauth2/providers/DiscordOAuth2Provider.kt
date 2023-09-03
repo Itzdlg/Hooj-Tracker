@@ -1,4 +1,4 @@
-package sh.dominick.hoojtracker.modules.oauth2.providers
+package sh.dominick.hoojtracker.modules.accounts.oauth2.providers
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser

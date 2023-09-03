@@ -9,10 +9,10 @@ import junit.framework.TestCase.assertTrue
 import mock.TestingDatabase
 import org.junit.BeforeClass
 import org.junit.Test
-import sh.dominick.hoojtracker.modules.accounts.data.AccountCredentialsTable
+import sh.dominick.hoojtracker.modules.accounts.passwords.data.AccountPasswordsTable
 import sh.dominick.hoojtracker.modules.accounts.data.AccountDTO
 import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
-import sh.dominick.hoojtracker.modules.oauth2.data.OAuth2ConnectionsTable
+import sh.dominick.hoojtracker.modules.accounts.oauth2.data.OAuth2ConnectionsTable
 import sh.dominick.hoojtracker.modules.accounts.routes.AccountsController
 
 class CreateAccountTests {
@@ -24,7 +24,7 @@ class CreateAccountTests {
         fun setup() {
             TestingDatabase.connect(
                 AccountsTable,
-                AccountCredentialsTable,
+                AccountPasswordsTable,
                 OAuth2ConnectionsTable
             )
         }

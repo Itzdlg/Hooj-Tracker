@@ -1,14 +1,14 @@
-package sh.dominick.hoojtracker.modules.oauth2
+package sh.dominick.hoojtracker.modules.accounts.oauth2
 
 import com.google.gson.GsonBuilder
 import io.javalin.community.routing.annotations.AnnotatedRoutingPlugin
 import io.javalin.config.JavalinConfig
 import sh.dominick.hoojtracker.data.config.Configuration
 import sh.dominick.hoojtracker.modules.Module
-import sh.dominick.hoojtracker.modules.oauth2.data.OAuth2ConnectionsTable
-import sh.dominick.hoojtracker.modules.oauth2.providers.DiscordOAuth2Provider
-import sh.dominick.hoojtracker.modules.oauth2.providers.OAuth2Provider
-import sh.dominick.hoojtracker.modules.oauth2.routes.OAuth2ConnectionsController
+import sh.dominick.hoojtracker.modules.accounts.oauth2.data.OAuth2ConnectionsTable
+import sh.dominick.hoojtracker.modules.accounts.oauth2.providers.DiscordOAuth2Provider
+import sh.dominick.hoojtracker.modules.accounts.oauth2.providers.OAuth2Provider
+import sh.dominick.hoojtracker.modules.accounts.oauth2.routes.OAuth2ConnectionsController
 import sh.dominick.hoojtracker.modules.sessions.SessionsModule
 
 object OAuth2ConnectionsModule : Module("accounts.oauth2_connections") {

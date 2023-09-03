@@ -29,8 +29,8 @@ open class Module(val id: String) {
         gsonBuilder.apply(gson)
         javalinConfig.apply(javalin)
 
-        submodules.forEach { _ ->
-            load(routingPlugin, gsonBuilder, javalinConfig)
+        submodules.forEach {
+            it.load(routingPlugin, gsonBuilder, javalinConfig)
         }
     }
 }

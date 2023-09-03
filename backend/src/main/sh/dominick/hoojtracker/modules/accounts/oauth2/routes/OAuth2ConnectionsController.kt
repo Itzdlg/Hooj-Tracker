@@ -1,4 +1,4 @@
-package sh.dominick.hoojtracker.modules.oauth2.routes
+package sh.dominick.hoojtracker.modules.accounts.oauth2.routes
 
 import com.google.api.client.auth.oauth2.TokenResponseException
 import io.javalin.community.routing.annotations.Body
@@ -10,10 +10,10 @@ import io.javalin.http.ServiceUnavailableResponse
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import sh.dominick.hoojtracker.modules.accounts.data.Account
-import sh.dominick.hoojtracker.modules.accounts.data.AccountCredentials
-import sh.dominick.hoojtracker.modules.oauth2.OAuth2ConnectionsModule
-import sh.dominick.hoojtracker.modules.oauth2.data.OAuth2Connection
-import sh.dominick.hoojtracker.modules.oauth2.data.OAuth2ConnectionsTable
+import sh.dominick.hoojtracker.modules.accounts.passwords.data.AccountPassword
+import sh.dominick.hoojtracker.modules.accounts.oauth2.OAuth2ConnectionsModule
+import sh.dominick.hoojtracker.modules.accounts.oauth2.data.OAuth2Connection
+import sh.dominick.hoojtracker.modules.accounts.oauth2.data.OAuth2ConnectionsTable
 
 object OAuth2ConnectionsController {
     data class CreateOAuth2Request(
@@ -72,7 +72,7 @@ object OAuth2ConnectionsController {
                 if (request.email == null)
                     throw ConflictResponse("You must provide an email to set a password.")
 
-                AccountCredentials.new(account, request.password)
+                AccountPassword.new(account, request.password)
             }
 
             ctx.json(mapOf(

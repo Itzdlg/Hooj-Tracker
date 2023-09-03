@@ -1,4 +1,4 @@
-package sh.dominick.hoojtracker.modules.oauth2.providers
+package sh.dominick.hoojtracker.modules.accounts.oauth2.providers
 
 import com.google.api.client.auth.oauth2.*
 import com.google.api.client.http.BasicAuthentication

@@ -1,4 +1,4 @@
-package sh.dominick.hoojtracker.modules.accounts
+package sh.dominick.hoojtracker.modules.accounts.passwords
 
 import com.google.gson.JsonObject
 import io.javalin.http.Context
@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.transactions.transaction
 import sh.dominick.hoojtracker.modules.accounts.data.Account
 import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
-import sh.dominick.hoojtracker.modules.accounts.data.isPassword
+import sh.dominick.hoojtracker.modules.accounts.passwords.data.isPassword
 import sh.dominick.hoojtracker.modules.sessions.SessionTransformer
 import sh.dominick.hoojtracker.modules.sessions.data.Session
 import sh.dominick.hoojtracker.util.toJsonObject

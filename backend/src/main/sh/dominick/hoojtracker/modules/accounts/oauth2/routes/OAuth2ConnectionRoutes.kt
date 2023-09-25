@@ -10,6 +10,7 @@ import io.javalin.http.ServiceUnavailableResponse
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import sh.dominick.hoojtracker.modules.accounts.data.Account
+import sh.dominick.hoojtracker.modules.accounts.data.dto
 import sh.dominick.hoojtracker.modules.accounts.passwords.data.AccountPassword
 import sh.dominick.hoojtracker.modules.accounts.oauth2.OAuth2ConnectionsModule
 import sh.dominick.hoojtracker.modules.accounts.oauth2.data.OAuth2Connection

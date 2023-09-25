@@ -11,6 +11,7 @@ import sh.dominick.hoojtracker.auth.AuthData
 import sh.dominick.hoojtracker.gson
 import sh.dominick.hoojtracker.modules.accounts.data.Account
 import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
+import sh.dominick.hoojtracker.modules.accounts.data.dto
 import sh.dominick.hoojtracker.util.transformInstant
 import java.util.*
 

@@ -87,22 +87,6 @@ class CreateAccountTests {
         }) }
     }
 
-    @Test
-    fun `Create a Normal Account With Password Includes Password Login Method`() {
-        val request = AccountRoutes.CreateNormalRequest(
-            email = newEmail(),
-            name = newName(),
-            password = "1234567!"
-        )
-
-        AccountRoutes.create(ctx, request)
-
-        verify { ctx.json(withArg {
-            val dto = assertAndReadAccount(it)
-            assertTrue(dto.loginMethods.password)
-        }) }
-    }
-
     @Test(expected = ConflictResponse::class)
     fun `Create a Normal Account With Conflicting Email Throws ConflictResponse`() {
         val email = newEmail()

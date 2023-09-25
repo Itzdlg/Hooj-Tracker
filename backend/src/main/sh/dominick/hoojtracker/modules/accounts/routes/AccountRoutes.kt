@@ -10,6 +10,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import sh.dominick.hoojtracker.modules.accounts.data.Account
 import sh.dominick.hoojtracker.modules.accounts.passwords.data.AccountPassword
 import sh.dominick.hoojtracker.modules.accounts.data.AccountsTable
+import sh.dominick.hoojtracker.modules.accounts.data.dto
 
 @Endpoints("/accounts")
 object AccountRoutes {

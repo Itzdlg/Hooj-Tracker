@@ -35,15 +35,6 @@ class Account(id: EntityID<UUID>) : UUIDEntity(id) {
 
     var createdAt by AccountsTable.createdAt.transformInstant()
     var updatedAt by AccountsTable.updatedAt.transformInstant()
-
-    fun dto() = AccountDTO(
-        id = id.value,
-        email = email,
-        name = name,
-        createdAt = createdAt.toEpochMilli(),
-        updatedAt = updatedAt.toEpochMilli(),
-        loginMethods = LoginMethodsDTO(this)
-    )
 }
 
 open class AccountDTO(
@@ -51,6 +42,13 @@ open class AccountDTO(
     val email: String?,
     val name: String,
     val createdAt: Long,
-    val updatedAt: Long,
-    val loginMethods: LoginMethodsDTO
+    val updatedAt: Long
+)
+
+fun Account.dto() = AccountDTO(
+    id = id.value,
+    email = email,
+    name = name,
+    createdAt = createdAt.toEpochMilli(),
+    updatedAt = updatedAt.toEpochMilli()
 )

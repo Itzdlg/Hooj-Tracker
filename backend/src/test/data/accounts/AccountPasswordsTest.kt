@@ -6,8 +6,8 @@ import mock.TestingDatabase
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.BeforeClass
 import org.junit.Test
-import sh.dominick.hoojtracker.modules.accounts.data.*
-import sh.dominick.hoojtracker.modules.accounts.passwords.data.*
+import sh.dominick.inpeel.modules.accounts.data.*
+import sh.dominick.inpeel.modules.accounts.passwords.data.*
 
 class AccountPasswordsTest {
     companion object {

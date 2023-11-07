@@ -5,8 +5,8 @@ import junit.framework.TestCase.assertTrue
 import mock.TestingDatabase
 import org.junit.BeforeClass
 import org.junit.Test
-import sh.dominick.hoojtracker.data.config.Configuration
-import sh.dominick.hoojtracker.data.config.ConfigurationTable
+import sh.dominick.inpeel.data.config.Configuration
+import sh.dominick.inpeel.data.config.ConfigurationTable
 
 class ConfigurationTest {
     companion object {

@@ -3,7 +3,7 @@ package mock
 import com.zaxxer.hikari.HikariDataSource
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import sh.dominick.hoojtracker.data.config.ConfigurationTable
+import sh.dominick.inpeel.data.config.ConfigurationTable
 
 object TestingDatabase {
     init {

@@ -17,7 +17,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
-import sh.dominick.hoojtracker.util.Filter
+import sh.dominick.inpeel.util.Filter
 import java.util.concurrent.ThreadLocalRandom
 
 class URLQuerySieveTests {

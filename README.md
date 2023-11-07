@@ -1,4 +1,4 @@
-# Hooj Tracker
+# Inpeel
 
 ### Project Purpose
 Currently, Woohoojin is using a bare-bones note tracking webapp that syncs with a Google Sheet. In my opinion, this is not sufficient. Furthermore, while I have no good webapps on my portfolio, I've decided to create this app.

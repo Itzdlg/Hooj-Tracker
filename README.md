@@ -22,6 +22,8 @@ The goal is to develop the following features:
     - Include notes
   - Share playbook so it can be copied by others via link
   - Public Woohoojin Playbook Library (to replace the discord forum)
+- Review Library (?)
+  - After the 'Woohoojin Vods' video is posted, let the Reviewer or Mods link the vod and review so "Raze Gold 1 Bind" gameplay reviews can be filtered by everyone.
 - Reviews
   - Send a game from Game Library to be reviewed
   - Each review is moderated by designated staff and can be approved/denied like on Discord

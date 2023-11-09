@@ -13,6 +13,7 @@
     <name>inpeel</name>
 
     <modules>
-        <module>backend</module>
+        <module>rest-backend</module>
+        <module>lib</module>
     </modules>
 </project>

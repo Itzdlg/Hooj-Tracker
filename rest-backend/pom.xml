@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
 
     <artifactId>rest-backend</artifactId>
-    <name>rest-api</name>
+    <name>rest-backend</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -85,7 +85,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>libs/</classpathPrefix>
-                            <mainClass>sh.dominick.inpeel.ApplicationKt</mainClass>
+                            <mainClass>sh.dominick.inpeel.rest.ApplicationKt</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

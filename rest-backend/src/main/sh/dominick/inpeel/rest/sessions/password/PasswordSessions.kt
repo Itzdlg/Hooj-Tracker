@@ -1,15 +1,15 @@
-package sh.dominick.inpeel.lib.data.passwords
+package sh.dominick.inpeel.rest.sessions.password
 
 import com.google.gson.JsonObject
 import io.javalin.http.Context
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.transactions.transaction
-import sh.dominick.inpeel.lib.data.passwords.sql.isPassword
-import sh.dominick.inpeel.lib.data.sessions.SessionTransformer
 import sh.dominick.inpeel.lib.data.sessions.sql.Session
 import sh.dominick.inpeel.lib.data.sql.Account
 import sh.dominick.inpeel.lib.data.sql.AccountsTable
-import sh.dominick.inpeel.lib.managers.SessionManager
+import sh.dominick.inpeel.lib.data.passwords.sql.isPassword
+import sh.dominick.inpeel.rest.sessions.RestSessionManager
+import sh.dominick.inpeel.rest.sessions.SessionTransformer
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -35,7 +35,7 @@ object PasswordSessionTransformer : SessionTransformer {
                     if (rememberMe)
                         Instant.now().plus(30, ChronoUnit.DAYS)
                     else Instant.now().plus(6, ChronoUnit.HOURS)
-                this.metadata = SessionManager.gson.toJsonTree(PasswordSessionMetadata(email)).asJsonObject
+                this.metadata = RestSessionManager.gson.toJsonTree(PasswordSessionMetadata(email)).asJsonObject
             }
         }
     }

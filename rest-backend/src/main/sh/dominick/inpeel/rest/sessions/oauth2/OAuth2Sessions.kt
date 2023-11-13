@@ -1,16 +1,15 @@
-package sh.dominick.inpeel.lib.data.oauth2
+package sh.dominick.inpeel.rest.sessions.oauth2
 
 import com.google.api.client.auth.oauth2.TokenResponseException
 import com.google.gson.*
 import io.javalin.http.Context
 import org.jetbrains.exposed.sql.transactions.transaction
+import sh.dominick.inpeel.lib.data.sessions.sql.Session
 import sh.dominick.inpeel.lib.data.oauth2.providers.OAuth2Grant
 import sh.dominick.inpeel.lib.data.oauth2.providers.ProviderGrant
 import sh.dominick.inpeel.lib.data.oauth2.sql.connection
-import sh.dominick.inpeel.lib.data.sessions.SessionTransformer
-import sh.dominick.inpeel.lib.data.sessions.sql.Session
-import sh.dominick.inpeel.lib.managers.OAuth2ConnectionsManager
-import sh.dominick.inpeel.lib.managers.SessionManager
+import sh.dominick.inpeel.rest.sessions.RestSessionManager
+import sh.dominick.inpeel.rest.sessions.SessionTransformer
 import java.lang.reflect.Type
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -43,7 +42,7 @@ object OAuth2SessionTransformer : SessionTransformer {
                         Instant.now().plus(30, ChronoUnit.DAYS)
                     else
                         Instant.now().plus(6, ChronoUnit.HOURS)
-                metadata = SessionManager.gson.toJsonTree(OAuth2SessionMetadata(grant)).asJsonObject
+                metadata = RestSessionManager.gson.toJsonTree(OAuth2SessionMetadata(grant)).asJsonObject
             }
         }
     }

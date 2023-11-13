@@ -16,9 +16,9 @@ import sh.dominick.inpeel.lib.data.sessions.sql.SessionsTable
 import sh.dominick.inpeel.lib.data.sql.AccountsTable
 import sh.dominick.inpeel.lib.data.sql.Configuration
 import sh.dominick.inpeel.lib.data.sql.ConfigurationTable
-import sh.dominick.inpeel.lib.managers.OAuth2ConnectionsManager
-import sh.dominick.inpeel.lib.managers.PasswordsManager
-import sh.dominick.inpeel.lib.managers.SessionManager
+import sh.dominick.inpeel.rest.sessions.RestSessionManager
+import sh.dominick.inpeel.rest.sessions.oauth2.OAuth2ConnectionsManager
+import sh.dominick.inpeel.rest.sessions.password.PasswordManager
 import java.lang.reflect.Type
 
 var gson = GsonBuilder()
@@ -66,9 +66,9 @@ fun main() {
             SchemaUtils.createMissingTablesAndColumns(ConfigurationTable)
             Configuration
 
-            SessionManager
+            RestSessionManager
             OAuth2ConnectionsManager.load(routingPlugin, gsonBuilder, config)
-            PasswordsManager.load(routingPlugin, gsonBuilder, config)
+            PasswordManager.load(routingPlugin, gsonBuilder, config)
 
             setOf(
                 AccountsTable,

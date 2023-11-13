@@ -1,4 +1,4 @@
-package sh.dominick.inpeel.lib.data.sessions
+package sh.dominick.inpeel.rest.sessions
 
 import com.google.gson.JsonObject
 import io.javalin.http.Context

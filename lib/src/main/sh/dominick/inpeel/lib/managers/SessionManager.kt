@@ -6,12 +6,11 @@ import io.javalin.http.Context
 import io.javalin.http.ForbiddenResponse
 import org.jetbrains.exposed.sql.transactions.transaction
 import sh.dominick.inpeel.lib.data.oauth2.providers.ProviderException
-import sh.dominick.inpeel.lib.data.sessions.SessionTransformer
 import sh.dominick.inpeel.lib.data.sessions.sql.Session
 import java.time.Instant
 import java.util.*
 
-object SessionManager {
+open class SessionManager<T>(val cookieKey: String) {
     init {
         AuthorizationManager.registerType("Bearer") {
             val sessionId = try {
@@ -26,21 +25,19 @@ object SessionManager {
 
     var gson = GsonBuilder().create()
 
-    const val COOKIE_KEY = "session"
+    protected val types = mutableMapOf<String, T>()
 
-    private val types = mutableMapOf<String, SessionTransformer>()
-
-    fun registerType(key: String, handler: SessionTransformer) {
+    fun registerType(key: String, handler: T) {
         if (types.containsKey(key.lowercase()))
             throw IllegalStateException()
 
         types[key.lowercase()] = handler
     }
 
-    fun getType(key: String): SessionTransformer? = types[key.lowercase()]
+    fun getType(key: String): T? = types[key.lowercase()]
 
     operator fun get(ctx: Context): Session? {
-        val cookie = ctx.cookie(COOKIE_KEY)
+        val cookie = ctx.cookie(cookieKey)
 
         if (cookie.isNullOrBlank()) {
             val auth = AuthorizationManager[ctx]

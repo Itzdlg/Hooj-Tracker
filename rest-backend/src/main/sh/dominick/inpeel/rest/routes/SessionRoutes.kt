@@ -6,7 +6,7 @@ import io.javalin.http.BadRequestResponse
 import io.javalin.http.Context
 import io.javalin.http.ForbiddenResponse
 import org.jetbrains.exposed.sql.transactions.transaction
-import sh.dominick.inpeel.lib.managers.SessionManager
+import sh.dominick.inpeel.rest.sessions.RestSessionManager
 import java.lang.IllegalArgumentException
 
 @Endpoints("/sessions")
@@ -21,7 +21,7 @@ object SessionRoutes {
         val type = body["type"].asString
             ?: throw BadRequestResponse("Missing `type` property.")
 
-        val handler = SessionManager.getType(type)
+        val handler = RestSessionManager.getType(type)
             ?: throw BadRequestResponse("That is not a valid session type.")
 
         val session = try {
@@ -30,7 +30,7 @@ object SessionRoutes {
             throw BadRequestResponse(ex.message ?: "Invalid JSON provided for the specified type.")
         }
 
-        ctx.cookie(SessionManager.COOKIE_KEY, session.id.value.toString())
+        ctx.cookie(RestSessionManager.cookieKey, session.id.value.toString())
 
         ctx.json(mapOf(
             "session" to session.dto()
@@ -39,18 +39,18 @@ object SessionRoutes {
 
     @Delete("/@")
     fun logout(ctx: Context) {
-        val session = SessionManager[ctx]
+        val session = RestSessionManager[ctx]
             ?: throw ForbiddenResponse()
 
         transaction {
             session.delete()
-            ctx.removeCookie(SessionManager.COOKIE_KEY)
+            ctx.removeCookie(RestSessionManager.cookieKey)
         }
     }
 
     @Get("/@")
     fun info(ctx: Context) {
-        val session = SessionManager[ctx]
+        val session = RestSessionManager[ctx]
             ?: throw ForbiddenResponse()
 
         ctx.json(mapOf(

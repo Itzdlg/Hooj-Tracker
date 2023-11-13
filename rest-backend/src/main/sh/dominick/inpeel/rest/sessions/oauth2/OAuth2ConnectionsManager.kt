@@ -1,25 +1,15 @@
-package sh.dominick.inpeel.lib.managers
+package sh.dominick.inpeel.rest.sessions.oauth2
 
 import com.google.gson.GsonBuilder
 import io.javalin.community.routing.annotations.AnnotatedRoutingPlugin
 import io.javalin.config.JavalinConfig
 import sh.dominick.inpeel.lib.ApplicationInitialized
-import sh.dominick.inpeel.lib.data.oauth2.OAuth2SessionMetadata
-import sh.dominick.inpeel.lib.data.oauth2.OAuth2SessionTransformer
 import sh.dominick.inpeel.lib.data.oauth2.providers.DiscordOAuth2Provider
 import sh.dominick.inpeel.lib.data.oauth2.providers.OAuth2Provider
 import sh.dominick.inpeel.lib.data.sql.Configuration
+import sh.dominick.inpeel.rest.sessions.RestSessionManager
 
 object OAuth2ConnectionsManager : ApplicationInitialized {
-    init {
-        SessionManager.registerType("oauth2-connection", OAuth2SessionTransformer)
-
-        SessionManager.gson
-            .newBuilder()
-            .registerTypeAdapter(OAuth2SessionMetadata::class.java, OAuth2SessionMetadata.GsonSerializer)
-            .create()
-    }
-
     private val clientId = { provider: OAuth2Provider ->
         Configuration["oauth2.providers.${provider.apiId}.client_id"] ?: ""
     }
@@ -53,6 +43,13 @@ object OAuth2ConnectionsManager : ApplicationInitialized {
     )
 
     override fun load(routingPlugin: AnnotatedRoutingPlugin, gsonBuilder: GsonBuilder, javalinConfig: JavalinConfig) {
+        RestSessionManager.registerType("oauth2-connection", OAuth2SessionTransformer)
+
+        RestSessionManager.gson
+            .newBuilder()
+            .registerTypeAdapter(OAuth2SessionMetadata::class.java, OAuth2SessionMetadata.GsonSerializer)
+            .create()
+
         providers.map { it.apiId }.forEach {
             Configuration.define(
                 "oauth2.providers.${it}.client_id" to "",

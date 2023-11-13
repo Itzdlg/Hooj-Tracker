@@ -11,7 +11,6 @@ import sh.dominick.inpeel.lib.data.oauth2.providers.OAuth2Provider
 import sh.dominick.inpeel.lib.data.sql.Account
 import sh.dominick.inpeel.lib.data.sql.Account.Companion.referrersOn
 import sh.dominick.inpeel.lib.data.sql.AccountsTable
-import sh.dominick.inpeel.lib.managers.OAuth2ConnectionsManager
 
 object OAuth2ConnectionsTable : IntIdTable("oauth2_connections") {
     val account = reference("account", AccountsTable, onDelete = ReferenceOption.CASCADE).uniqueIndex()
@@ -27,13 +26,15 @@ object OAuth2ConnectionsTable : IntIdTable("oauth2_connections") {
 }
 
 class OAuth2Connection(id : EntityID<Int>) : IntEntity(id) {
-    companion object : EntityClass<Int, OAuth2Connection>(OAuth2ConnectionsTable)
+    companion object : EntityClass<Int, OAuth2Connection>(OAuth2ConnectionsTable) {
+        lateinit var providers: Set<OAuth2Provider>
+    }
 
     var account by Account referencedOn OAuth2ConnectionsTable.account
 
     var provider by OAuth2ConnectionsTable.provider.transform(
         toColumn = { it.id },
-        toReal = { id -> OAuth2ConnectionsManager.providers.first { it.id == id } }
+        toReal = { id -> providers.first { it.id == id } }
     )
 
     var providerAccountId by OAuth2ConnectionsTable.providerAccountId

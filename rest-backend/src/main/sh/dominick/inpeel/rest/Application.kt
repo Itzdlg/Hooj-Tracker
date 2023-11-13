@@ -17,6 +17,7 @@ import sh.dominick.inpeel.lib.data.sql.AccountsTable
 import sh.dominick.inpeel.lib.data.sql.Configuration
 import sh.dominick.inpeel.lib.data.sql.ConfigurationTable
 import sh.dominick.inpeel.lib.managers.OAuth2ConnectionsManager
+import sh.dominick.inpeel.lib.managers.PasswordsManager
 import sh.dominick.inpeel.lib.managers.SessionManager
 import java.lang.reflect.Type
 
@@ -65,8 +66,9 @@ fun main() {
             SchemaUtils.createMissingTablesAndColumns(ConfigurationTable)
             Configuration
 
-            OAuth2ConnectionsManager.load(routingPlugin, gsonBuilder, config)
             SessionManager
+            OAuth2ConnectionsManager.load(routingPlugin, gsonBuilder, config)
+            PasswordsManager.load(routingPlugin, gsonBuilder, config)
 
             setOf(
                 AccountsTable,

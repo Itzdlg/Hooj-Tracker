@@ -7,6 +7,7 @@ import sh.dominick.inpeel.lib.ApplicationInitialized
 import sh.dominick.inpeel.lib.data.oauth2.providers.DiscordOAuth2Provider
 import sh.dominick.inpeel.lib.data.oauth2.providers.OAuth2Provider
 import sh.dominick.inpeel.lib.data.sql.Configuration
+import sh.dominick.inpeel.lib.sessions.OAuth2SessionMetadata
 import sh.dominick.inpeel.rest.sessions.RestSessionManager
 
 object OAuth2ConnectionsManager : ApplicationInitialized {
